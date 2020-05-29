@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.peercoin.core.currency.CurrencyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-04-16T21:16:57" hostname="ARCHON" time="0.318">
+  <properties/>
+  <testcase name="checkJsonify" classname="com.peercoin.core.currency.CurrencyTest" time="0.318"/>
+  <system-out><![CDATA[{"name":"Bitcoin","ticker":"BTC","className":"crypto","currencyMethods":null}
+Name: Bitcoin
+Ticker: BTC
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

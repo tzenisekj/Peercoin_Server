@@ -1,1 +1,1 @@
-# Peercoin_Server
+# PeerCoin
