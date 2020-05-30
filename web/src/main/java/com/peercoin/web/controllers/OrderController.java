@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 @RequestMapping("/order")
 @SuppressWarnings("unused")
 public class OrderController {
-    private Logger logger=Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private final Logger logger=Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     @Autowired
     private IOrderService orderService;
 

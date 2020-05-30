@@ -3,7 +3,6 @@ package com.peercoin.web.config;
 import com.peercoin.core.messaging.Exchanges;
 import com.peercoin.core.messaging.Queues;
 import com.peercoin.core.messaging.RoutingKeys;
-import com.peercoin.web.services.CurrencyService;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -11,8 +10,6 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -84,20 +81,5 @@ public class MessagingConfig {
     @Bean
     ConnectionFactory connectionFactory() {
         return cachingConnectionFactory();
-    }
-
-//    @Bean
-//    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
-//                                             MessageListenerAdapter listenerAdapter) {
-//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-//        container.setConnectionFactory(connectionFactory);
-//        container.setQueueNames(cryptoQueue,fiatQueue,paymentMethodQueue);
-//        container.setMessageListener(listenerAdapter);
-//        return container;
-//    }
-
-    @Bean
-    MessageListenerAdapter listenerAdapter(CurrencyService receiver) {
-        return new MessageListenerAdapter(receiver, "receiveCurrencyMessage");
     }
 }

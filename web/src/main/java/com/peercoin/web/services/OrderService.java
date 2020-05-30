@@ -62,8 +62,8 @@ public class OrderService implements IOrderService {
         order.setExchangeRate(orderDto.getExchangeRate());
         order.setMax(orderDto.getMax());
         order.setMin(orderDto.getMin());
-        orderRepository.save(order);
-        return order;
+
+        return orderRepository.save(order);
     }
 
     @Override

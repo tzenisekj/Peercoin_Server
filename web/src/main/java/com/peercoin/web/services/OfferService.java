@@ -23,8 +23,10 @@ public class OfferService implements IOfferService {
         } else { //if offerDto.getType().equalsIgnoreCase("payment"))
             offer.setAmount(offerDto.getAmount());
         }
+
         offer.setOrder(order);
         offer.setBuyer(buyer);
+
         offerRepository.save(offer);
         return offer;
     }

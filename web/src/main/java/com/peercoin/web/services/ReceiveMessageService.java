@@ -29,18 +29,18 @@ public class ReceiveMessageService {
     @RabbitListener(queues = {Queues.CRYPTO_QUEUE,Queues.FIAT_QUEUE})
     public Currency receiveCurrencyMessage(String message) {
         try {
-                Currency currency = Currency.parseJson(message);
-                if (currency.getClassName().equalsIgnoreCase("crypto")) {
-                    CryptoCoin cryptoCoin = new CryptoCoin();
-                    cryptoCoin.setName(currency.getName());
-                    cryptoCoin.setTicker(currency.getTicker());
-                    return currencyService.addCurrency(cryptoCoin);
-                } else if (currency.getClassName().equalsIgnoreCase("fiat")) {
-                    Fiat fiat = new Fiat();
-                    fiat.setName(currency.getName());
-                    fiat.setTicker(currency.getTicker());
-                    return currencyService.addCurrency(fiat);
-                }
+            Currency currency = Currency.parseJson(message);
+            if (currency.getClassName().equalsIgnoreCase("crypto")) {
+                CryptoCoin cryptoCoin = new CryptoCoin();
+                cryptoCoin.setName(currency.getName());
+                cryptoCoin.setTicker(currency.getTicker());
+                return currencyService.addCurrency(cryptoCoin);
+            } else if (currency.getClassName().equalsIgnoreCase("fiat")) {
+                Fiat fiat = new Fiat();
+                fiat.setName(currency.getName());
+                fiat.setTicker(currency.getTicker());
+                return currencyService.addCurrency(fiat);
+            }
         } catch(CurrencyNameExistsException | CurrencyTickerExistsException e) {
             logger.log(Level.INFO,e.getMessage());
         } catch (IOException e) {
