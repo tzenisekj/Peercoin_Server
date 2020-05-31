@@ -6,5 +6,4 @@ import com.peercoin.core.currency.exceptions.CurrencyTickerExistsException;
 
 public interface ICurrencyService {
     Currency addCurrency(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException;
-    Currency receiveCurrencyMessage(Object message);
 }

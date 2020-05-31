@@ -18,16 +18,18 @@ public class OfferService implements IOfferService {
     @Override
     public Offer submitOffer(OfferDto offerDto, Order order, User buyer) {
         Offer offer=new Offer();
-        if (offerDto.getType().equalsIgnoreCase("crypto")){
-            offer.setAmount(offerDto.getAmount()*order.getExchangeRate());
-        } else { //if offerDto.getType().equalsIgnoreCase("payment"))
-            offer.setAmount(offerDto.getAmount());
-        }
-
+        offer.setAmount(retrieveOfferAmount(offerDto,order.getExchangeRate()));
         offer.setOrder(order);
         offer.setBuyer(buyer);
-
         offerRepository.save(offer);
         return offer;
+    }
+
+    private double retrieveOfferAmount(OfferDto offerDto, double exchangeRate) {
+        if (offerDto.getType().equalsIgnoreCase("crypto")){
+            return offerDto.getAmount()*exchangeRate;
+        } else { //if offerDto.getType().equalsIgnoreCase("payment"))
+            return offerDto.getAmount();
+        }
     }
 }

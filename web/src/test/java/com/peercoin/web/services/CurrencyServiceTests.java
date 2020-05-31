@@ -1,6 +1,8 @@
 package com.peercoin.web.services;
 
 import com.peercoin.core.currency.Currency;
+import com.peercoin.core.currency.exceptions.CurrencyNameExistsException;
+import com.peercoin.core.currency.exceptions.CurrencyTickerExistsException;
 import com.peercoin.web.models.CryptoCoin;
 import com.peercoin.web.models.Fiat;
 import com.peercoin.web.repositories.CryptoCoinRepository;
@@ -23,19 +25,20 @@ public class CurrencyServiceTests {
 
     @Test
     public void testAddCurrencyMethodWithCrypto() {
-        CryptoCoin crypto=new CryptoCoin();
+        CryptoCoin crypto = new CryptoCoin();
         crypto.setClassName("crypto");
         crypto.setName("Bitcoin");
         crypto.setTicker("BTC");
-        CryptoCoin returnedCrypto=null;
+        CryptoCoin returnedCrypto = null;
         try {
-            Currency returnedCurrency=currencyService.addCurrency(crypto);
+            Currency returnedCurrency = currencyService.addCurrency(crypto);
             Assertions.assertTrue(returnedCurrency instanceof CryptoCoin);
             returnedCrypto = (CryptoCoin) returnedCurrency;
-            Assertions.assertEquals("Bitcoin",returnedCrypto.getName());
-            Assertions.assertEquals("BTC",returnedCrypto.getTicker());
-            CryptoCoin databaseCrypto=cryptoCoinRepository.getByName("Bitcoin");
-            Assertions.assertEquals("BTC",returnedCrypto.getTicker());
+            Assertions.assertEquals("Bitcoin", returnedCrypto.getName());
+            Assertions.assertEquals("BTC", returnedCrypto.getTicker());
+            CryptoCoin databaseCrypto = cryptoCoinRepository.getByName("Bitcoin");
+            Assertions.assertEquals("BTC", returnedCrypto.getTicker());
+            Assertions.assertEquals(crypto.getName(), databaseCrypto.getName());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -44,18 +47,19 @@ public class CurrencyServiceTests {
     @Test
     public void testAddCurrencyMethodWithFiat() {
 
-        Fiat fiat=new Fiat();
+        Fiat fiat = new Fiat();
         fiat.setClassName("fiat");
         fiat.setName("United States Dollar");
         fiat.setTicker("USD");
         try {
-            Currency returnedCurrency=currencyService.addCurrency(fiat);
+            Currency returnedCurrency = currencyService.addCurrency(fiat);
             Assertions.assertTrue(returnedCurrency instanceof Fiat);
             Fiat returnedCrypto = (Fiat) returnedCurrency;
-            Assertions.assertEquals("United States Dollar",returnedCrypto.getName());
-            Assertions.assertEquals("USD",returnedCrypto.getTicker());
-            Fiat databaseFiat=fiatRepository.getByName("United States Dollar");
-            Assertions.assertEquals("USD",returnedCrypto.getTicker());
+            Assertions.assertEquals("United States Dollar", returnedCrypto.getName());
+            Assertions.assertEquals("USD", returnedCrypto.getTicker());
+            Fiat databaseFiat = fiatRepository.getByName("United States Dollar");
+            Assertions.assertEquals("USD", returnedCrypto.getTicker());
+            Assertions.assertEquals(fiat.getName(), databaseFiat.getName());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

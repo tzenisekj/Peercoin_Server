@@ -30,39 +30,33 @@ public class CurrencyService implements ICurrencyService {
     @Override
     public Currency addCurrency(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException {
         checkCurrencyExistence(potential);
-
         if (potential instanceof CryptoCoin) {
-            CryptoCoin cryptoCoin=(CryptoCoin) potential;
-            cryptoRepository.save(cryptoCoin);
-            return cryptoCoin;
+            cryptoRepository.save(((CryptoCoin) potential));
         }
         if (potential instanceof Fiat) {
-            Fiat fiat = (Fiat) potential;
-            fiatRepository.save(fiat);
-            return fiat;
+            fiatRepository.save(((Fiat) potential));
         }
-        return null;
+        return potential;
     }
 
-    @Override
-    public Currency receiveCurrencyMessage(Object message) {
-        System.out.println();
-
-        System.out.println("OBJECT TYPEOF: " + message.toString());
-        System.out.println();
-        return null;
+    public void checkCurrencyExistence(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException {
+        checkIfCurrencyNameExists(potential.getName());
+        checkIfCurrencyTickerExists(potential.getTicker());
     }
 
-    private void checkCurrencyExistence(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException {
-        CryptoCoin crypto=cryptoRepository.getByName(potential.getName());
-        Fiat fiat=fiatRepository.getByName(potential.getName());
-        if (crypto != null || fiat != null){
-            throw new CurrencyNameExistsException("currency " + potential.getName() + " already exists");
+    private void checkIfCurrencyNameExists(String name) throws CurrencyNameExistsException {
+        CryptoCoin cryptoCoin = cryptoRepository.getByName(name);
+        Fiat fiat = fiatRepository.getByName(name);
+        if (cryptoCoin != null || fiat != null) {
+            throw new CurrencyNameExistsException("currency " + name + " already exists");
         }
-        crypto=cryptoRepository.getByTicker(potential.getTicker());
-        fiat=fiatRepository.getByTicker(potential.getTicker());
+    }
+
+    private void checkIfCurrencyTickerExists(String ticker) throws CurrencyTickerExistsException {
+        CryptoCoin crypto=cryptoRepository.getByTicker(ticker);
+        Fiat fiat=fiatRepository.getByTicker(ticker);
         if (crypto != null || fiat != null) {
-            throw new CurrencyTickerExistsException("ticker " + potential.getTicker() + " already exists");
+            throw new CurrencyTickerExistsException("ticker " + ticker + " already exists");
         }
     }
 }

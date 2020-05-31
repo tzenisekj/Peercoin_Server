@@ -63,17 +63,12 @@ public class OrderController {
 
     @PostMapping("/submit")
     public String postOrder(@RequestParam("type") String type,@ModelAttribute("order") OrderDto orderDto, Authentication authentication) {
-        if (authentication != null) {
-            if (authentication.isAuthenticated()) {
-                try {
-                    Order order = orderService.submitOrder(orderDto, type, ((UserDetails) authentication.getPrincipal()).getUsername());
-                }catch(CurrencyDoesNotExistException | PaymentMethodNameDoesNotExistException e){
-                    return "/error?error=currencydoesnotexist";
-                }
-                return "redirect:/";
-            }
+        try {
+            Order order = orderService.submitOrder(orderDto, type, ((UserDetails) authentication.getPrincipal()).getUsername());
+        }catch(CurrencyDoesNotExistException | PaymentMethodNameDoesNotExistException e){
+            return "/error?error=currencydoesnotexist";
         }
-        return "redirect:/login";
+        return "redirect:/";
     }
 
     @GetMapping("/{id}")

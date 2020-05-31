@@ -3,6 +3,7 @@ package com.peercoin.web.services;
 import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;
 import com.peercoin.core.currency.exceptions.PaymentMethodNameDoesNotExistException;
+import com.peercoin.core.paymentmethods.PaymentMethod;
 import com.peercoin.web.exceptions.IdDoesNotExist;
 import com.peercoin.web.models.*;
 import com.peercoin.web.models.dtos.OrderDto;
@@ -35,23 +36,16 @@ public class OrderService implements IOrderService {
 
     @Override
     public Order submitOrder(OrderDto orderDto, String type, String username)
-            throws UsernameNotFoundException, CurrencyDoesNotExistException, PaymentMethodNameDoesNotExistException {
+            throws CurrencyDoesNotExistException, PaymentMethodNameDoesNotExistException {
         User user=userRepository.getByUsername(username);
-        if (user==null){
-            throw new UsernameNotFoundException("Username " + username + " not found");
-        }
         CryptoCoin cryptoCoin=cryptoCoinRepository.getByName(orderDto.getCrypto());
         Currency currency=fiatRepository.getByName(orderDto.getCurrency());
         if (currency==null){
             currency=cryptoCoinRepository.getByName(orderDto.getCurrency());
         }
         FiatMethod fiatMethod=fiatMethodRepository.findByName(orderDto.getPaymentMethod());
-        if (cryptoCoin==null || currency == null) {
-            throw new CurrencyDoesNotExistException("attempted to use non-existent currency");
-        }
-        if (fiatMethod == null) {
-            throw new PaymentMethodNameDoesNotExistException("attempted to use non-existent payment method");
-        }
+        verifyCurrencyExistence(cryptoCoin,currency);
+        verifyPaymentMethodExistence(fiatMethod);
 
         Order order = new Order();
         order.setCrypto(cryptoCoin);
@@ -74,5 +68,17 @@ public class OrderService implements IOrderService {
     @Override
     public Order getOrder(String id) throws IdDoesNotExist {
         return orderRepository.findById(id).orElseThrow(() -> new IdDoesNotExist("id " + id + "does not exist"));
+    }
+
+    private void verifyCurrencyExistence(CryptoCoin cryptoCoin, Currency currency) throws CurrencyDoesNotExistException,PaymentMethodNameDoesNotExistException {
+        if (cryptoCoin==null || currency == null) {
+            throw new CurrencyDoesNotExistException("attempted to use non-existent currency");
+        }
+    }
+
+    private void verifyPaymentMethodExistence(PaymentMethod paymentMethod) throws PaymentMethodNameDoesNotExistException {
+        if (paymentMethod == null) {
+            throw new PaymentMethodNameDoesNotExistException("attempted to use non-existent payment method");
+        }
     }
 }

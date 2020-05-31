@@ -13,9 +13,13 @@ public class FiatMethodService implements IFiatMethodService {
 
     @Override
     public FiatMethod addFiatMethod(FiatMethod fiatMethod) throws PaymentMethodNameExistsException {
+        checkFiatMethodExistence(fiatMethod);
+        return fiatMethodRepository.save(fiatMethod);
+    }
+
+    public void checkFiatMethodExistence(FiatMethod fiatMethod) throws PaymentMethodNameExistsException {
         if (fiatMethodRepository.findByName(fiatMethod.getName()) != null) {
             throw new PaymentMethodNameExistsException("payment method name " + fiatMethod.getName() + " already exists");
         }
-        return fiatMethodRepository.save(fiatMethod);
     }
 }
