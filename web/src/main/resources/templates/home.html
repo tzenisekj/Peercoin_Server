@@ -24,7 +24,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Orders</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item dropdown-item-dark" href="#">View Orders</a>
+                            <a class="dropdown-item dropdown-item-dark" href="/order/all">View Orders</a>
                             <a class="dropdown-item" href="/order/submit">Place Orders</a>
                         </div>
                     </li>
@@ -94,6 +94,7 @@
                             <td th:text="${order.method.getName()}"></td>
                             <td th:text="${order.exchangeRate}"></td>
                             <td th:text="${order.min} + ' - ' + ${order.max}"></td>
+                            <td><a role="button" class="btn btn-info" th:href="@{/order/} + ${order.id}">order</a></td>
                         </tr>
                     </th:block>
                 </table>

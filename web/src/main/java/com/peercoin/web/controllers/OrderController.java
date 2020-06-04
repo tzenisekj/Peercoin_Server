@@ -8,6 +8,7 @@ import com.peercoin.web.models.Order;
 import com.peercoin.web.models.User;
 import com.peercoin.web.models.dtos.OfferDto;
 import com.peercoin.web.models.dtos.OrderDto;
+import com.peercoin.web.pojos.OrderType;
 import com.peercoin.web.repositories.CryptoCoinRepository;
 import com.peercoin.web.repositories.FiatMethodRepository;
 import com.peercoin.web.repositories.FiatRepository;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,4 +109,26 @@ public class OrderController {
             return "redirect:/order/" + id + "?submission=error&error=orderdoesnotexist";
         }
     }
+
+    @GetMapping("/all")
+    public String viewAllOrders(Model model, Authentication authentication) {
+        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+
+        List<Order> orders = orderService.getAllOrders();
+        List<Order> buyOrders = new ArrayList<>();
+        List<Order> sellOrders = new ArrayList<>();
+        for (Order order : orders) {
+            if (order.getInitiator().getUsername().equals(username)) {
+                if (order.getOrderType() == OrderType.BUY) {
+                    buyOrders.add(order);
+                } else {
+                    sellOrders.add(order);
+                }
+            }
+        }
+        model.addAttribute("sellOrders", sellOrders);
+        model.addAttribute("buyOrders", buyOrders);
+        return "orders";
+    }
+
 }
