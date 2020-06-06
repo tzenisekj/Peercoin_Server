@@ -4,7 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Document
 public class User {
@@ -16,9 +18,11 @@ public class User {
     private String email;
     private String phoneNumber;
     private List<String> roles;
+    private Map<String,Double> wallet;
 
     public User() {
         roles=new ArrayList<>();
+        wallet=new HashMap<>();
     }
 
     public String getId() {
@@ -67,5 +71,13 @@ public class User {
 
     public void setRole(String role) {
         roles.add(role);
+    }
+
+    public Map<String, Double> getWallet() {
+        return wallet;
+    }
+
+    public void insertWalletItem(String cryptoCoin, double value) {
+        this.wallet.put(cryptoCoin,value);
     }
 }
