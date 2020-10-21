@@ -1,0 +1,17 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+group= 'com.peercoin'
+version= '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    // Use JUnit test framework
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+    testImplementation 'junit:junit:4.12'
+}

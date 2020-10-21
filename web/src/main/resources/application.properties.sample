@@ -1,0 +1,6 @@
+server.port=8081
+
+rabbit.username=guest
+rabbit.password=guest
+
+rabbit.host=localhost
