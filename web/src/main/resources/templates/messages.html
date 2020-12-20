@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script th:src="@{/js/messaging.js}"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/messages-style.css">
+
+</head>
+<body class="bg-funky" th:onload="'initiateMessaging()'">
+<div class="container">
+    <h3 class="heading text-center">Chat Bubble</h3>
+    <div class="messaging" th:data-user="${user.getUsername()}" th:data-offer="${offer.getId()}" id="messaging">
+        <div class="inbox_msg">
+
+            <div class="mesgs">
+                <div class="msg_history">
+                </div>
+
+            </div>
+        </div>
+        <div class="input">
+                <input id="text" placeholder="..." type="text">
+                <input type="button" value="send" onclick="send()">
+            <!--TODO: formify for javascript this-->
+        </div>
+    </div>
+</div>
+</body>
+</html>

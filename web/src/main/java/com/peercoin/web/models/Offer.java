@@ -1,7 +1,10 @@
 package com.peercoin.web.models;
 
+import com.peercoin.web.pojos.Message;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 
 @Document
 public class Offer {
@@ -15,6 +18,12 @@ public class Offer {
 
     private Order order;
 
+    private ArrayList<Message> conversation;
+
+    public Offer() {
+        conversation = new ArrayList<>();
+    }
+
 
     public String getId() {
         return id;
@@ -22,6 +31,14 @@ public class Offer {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public ArrayList<Message> getConversation() {
+        return conversation;
+    }
+
+    public void addMessage(Message message) {
+        this.conversation.add(message);
     }
 
     public User getBuyer() {
