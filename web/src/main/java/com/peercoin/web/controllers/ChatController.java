@@ -12,7 +12,6 @@ import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +53,7 @@ public class ChatController {
         builtMessage.setContents(message.getMessage());
         builtMessage.setSender(sender);
         messageService.sendMessage(offer, builtMessage);
-        logger.log(Level.WARNING, "message sent");
+        logger.log(Level.INFO, "message sent");
         return ResponseEntity.ok("{\"response\":\"message sent\"}");
     }
 
