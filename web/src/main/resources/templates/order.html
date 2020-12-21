@@ -43,7 +43,8 @@
             </div>
         </nav>
     </header>
-        <h1>Order</h1>
+        <h1 th:if="${order.isBuy()}">Buy Order</h1>
+        <h1 th:unless="${order.isBuy()}">Sell Order</h1>
 
         <div class="container-sm order-container">
             <table class="table table-borderless table-dark">
@@ -51,7 +52,8 @@
                     <th></th>
                 </tr>
                 <tr>
-                    <td>Seller:</td>
+                    <td th:if="${order.isBuy()}">Seller:</td>
+                    <td th:unless="${order.isBuy()}">Buyer:</td>
                     <td th:text="${order.getInitiator().getUsername()}"></td>
                 </tr>
                 <tr>

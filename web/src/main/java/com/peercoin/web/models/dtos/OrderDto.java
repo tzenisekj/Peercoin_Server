@@ -4,6 +4,7 @@ public class OrderDto {
     private String crypto;
     private String paymentMethod;
     private String currency;
+    private String buy;
     private double exchangeRate;
     private double min;
     private double max;
@@ -54,5 +55,13 @@ public class OrderDto {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public String getBuy() {
+        return buy;
+    }
+
+    public void setBuy(String buy) {
+        this.buy = buy;
     }
 }

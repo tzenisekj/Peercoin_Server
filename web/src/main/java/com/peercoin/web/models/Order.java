@@ -12,6 +12,8 @@ public class Order {
 
     private User initiator;
 
+    private boolean buy;
+
     private CryptoCoin crypto;
     private Currency payment;
     private FiatMethod method;
@@ -99,5 +101,13 @@ public class Order {
 
     public void setMethod(FiatMethod method) {
         this.method = method;
+    }
+
+    public boolean isBuy() {
+        return buy;
+    }
+
+    public void setBuy(boolean buy) {
+        this.buy = buy;
     }
 }

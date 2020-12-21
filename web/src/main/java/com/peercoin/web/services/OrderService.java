@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional
@@ -56,6 +57,14 @@ public class OrderService implements IOrderService {
         order.setExchangeRate(orderDto.getExchangeRate());
         order.setMax(orderDto.getMax());
         order.setMin(orderDto.getMin());
+        switch(orderDto.getBuy().toLowerCase()) {
+            case "buy":
+                order.setBuy(true);
+                break;
+            case "sell":
+                order.setBuy(false);
+                break;
+        }
 
         return orderRepository.save(order);
     }

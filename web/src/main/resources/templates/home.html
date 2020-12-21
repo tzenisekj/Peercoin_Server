@@ -62,7 +62,7 @@
                         <th>rate</th>
                         <th>Quantity</th>
                     </tr>
-                    <th:block th:each="order : ${buyOrders}">
+                    <th:block th:each="order : ${sellOrders}">
                             <tr>
 
                                 <td th:text="${order.initiator.getUsername()}"></td>
@@ -86,7 +86,7 @@
                         <th>rate</th>
                         <th>asking range</th>
                     </tr>
-                    <th:block th:each="order : ${sellOrders}">
+                    <th:block th:each="order : ${buyOrders}">
                         <tr>
                             <td th:text="${order.initiator.getUsername()}"></td>
                             <td th:text="${order.crypto.getName()}"></td>

@@ -14,6 +14,7 @@
         <div class="tab-content">
             <div id="buy" class="tab-pane fade show active">
                 <form method="POST" th:action="@{/order/submit?type=buy}" th:object="${order}">
+                    <input type="hidden" value="buy" th:field="*{buy}">
                     <label for="crypto">Buy:</label>
                     <select id="crypto" th:field="*{crypto}" name="Cryptocurrency">
                         <th:block th:each="crypto : ${cryptos}">
@@ -58,6 +59,7 @@
             </div>
             <div id="sell" class="tab-pane fade">
                 <form method="POST" th:action="@{/order/submit?type=sell}" th:object="${order}">
+                    <input type="hidden" value="buy" th:field="*{buy}">
                     <label for="crypto">Sell:</label>
                     <select id="crypto" th:field="*{crypto}" name="Cryptocurrency">
                         <th:block th:each="crypto : ${cryptos}">
