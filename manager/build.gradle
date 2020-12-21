@@ -15,8 +15,18 @@ repositories {
 	}
 }
 
+task copyCore(type:Copy) {
+	from('../core/build/libs') {
+		include '*.jar'
+	}
+	into 'lib/'
+}
+
+compileJava.dependsOn copyCore
+
 dependencies {
-    implementation name: 'core-0.0.1-SNAPSHOT'
+	implementation project(':core')
+    	implementation name: 'core-0.0.1-SNAPSHOT'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
