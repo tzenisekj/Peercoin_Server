@@ -35,6 +35,7 @@ public class WalletController {
                 user.insertWalletItem(crypto.getName(),0.0);
             }
         });
+        model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("cryptos", cryptoCoinRepository.findAll());
         return "wallet";
     }

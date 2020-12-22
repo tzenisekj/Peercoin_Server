@@ -44,6 +44,8 @@ public class OfferController {
 
     @GetMapping("{id}/chat")
     public String chat(@PathVariable("id") String id, Model model, Authentication authentication) {
+        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
+        model.addAttribute("username",userDetails.getUsername());
         Offer offer = offerRepository.getById(id);
         User user = userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
         model.addAttribute("user", user);
@@ -56,6 +58,8 @@ public class OfferController {
     public String offers(Model model, Authentication authentication) {
         List<Offer> buyerOffers = offerRepository.getByBuyer(userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername()));
         List<Offer> sellerOffers = offerRepository.getBySeller(userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername()));
+        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
+        model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("buyerOffers", buyerOffers);
         model.addAttribute("sellerOffers", sellerOffers);
         return "offers";

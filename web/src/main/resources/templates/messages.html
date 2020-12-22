@@ -11,6 +11,8 @@
 
 </head>
 <body class="bg-funky" th:onload="'initiateMessaging()'">
+<div th:insert="~{order :: header}"></div>
+
 <div class="container">
     <h3 class="heading text-center">Chat Bubble</h3>
     <div class="messaging" th:data-user="${user.getUsername()}" th:data-offer="${offer.getId()}" id="messaging">

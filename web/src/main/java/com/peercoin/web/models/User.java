@@ -20,10 +20,17 @@ public class User {
     private List<String> roles;
     private Map<String,Double> wallet;
 
+    private List<Notifiable> storedNotifiables;
+
     public User() {
         roles=new ArrayList<>();
         wallet=new HashMap<>();
+        storedNotifiables = new ArrayList<>();
     }
+
+    public List<Notifiable> getStoredNotifiables(){ return storedNotifiables; }
+
+    public void addNotification(Notifiable newNotification){ storedNotifiables.add(newNotification); }
 
     public String getId() {
         return id;

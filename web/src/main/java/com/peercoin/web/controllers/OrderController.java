@@ -54,6 +54,8 @@ public class OrderController {
     public String submitOrder(Model model, Authentication authentication) {
         if (authentication != null) {
             if (authentication.isAuthenticated()) {
+                UserDetails userDetails=(UserDetails) authentication.getPrincipal();
+                model.addAttribute("username",userDetails.getUsername());
                 model.addAttribute("order",new OrderDto());
                 model.addAttribute("cryptos",cryptoCoinRepository.findAll());
                 model.addAttribute("fiats",fiatRepository.findAll());
@@ -92,6 +94,8 @@ public class OrderController {
             logger.log(Level.INFO,e.getMessage());
             return "/error?error=iddoesnotexist";
         }
+        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
+        model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("order",order);
         model.addAttribute("offer",new OfferDto());
         return "order";
@@ -126,6 +130,8 @@ public class OrderController {
                 }
             }
         }
+        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
+        model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("sellOrders", sellOrders);
         model.addAttribute("buyOrders", buyOrders);
         return "orders";

@@ -12,23 +12,19 @@ async function sendMessage(offerId, user, message) {
         body: JSON.stringify(toSend)
     })
     .then(response => {
-        console.log(response);
         receiveMessage(offerId,user);
     });
 }
 
 function receiveMessage(offerId, user) {
     let msg_history = document.getElementsByClassName("msg_history")[0];
-    console.log(msg_history);
     let url = window.location.origin + "/api/v1/chat/" + offerId;
     fetch(url)
     .then(response => response.json())
     .then(json => {
         removeAllChildNodes(msg_history);
-        console.log(json)
         json.forEach( item => {
             let message = item.contents;
-            console.log(message);
             let sender = item.sender.username;
             if (user == sender) {
                 let newDiv = document.createElement("div");
@@ -77,10 +73,8 @@ function send() {
 }
 
 async function initiateMessaging() {
-    console.log("messaging initiated");
     let offerId = document.getElementById("messaging").dataset.offer;
     let username = document.getElementById("messaging").dataset.user;
-    console.log(offerId);
     while(true) {
         receiveMessage(offerId, username);
         await new Promise(r => setTimeout(r, 3000));

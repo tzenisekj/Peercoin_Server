@@ -8,12 +8,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 @Transactional
 public class MessageService implements IMessageService {
+
     @Autowired
     private OfferRepository offerRepository;
+
+    @Autowired
+    private INotificationService notificationService;
 
     @Override
     public List<Message> getMessageHistory(Offer offer) {
@@ -24,5 +30,11 @@ public class MessageService implements IMessageService {
     public void sendMessage(Offer offer, Message message) {
         offer.addMessage(message);
         offerRepository.save(offer);
+        if(offer.getBuyer().getId().equals(message.getSender().getId())){
+            notificationService.addNotification(offer.getSeller(), message);
+        }
+        else{
+            notificationService.addNotification(offer.getBuyer(), message);
+        }
     }
 }
