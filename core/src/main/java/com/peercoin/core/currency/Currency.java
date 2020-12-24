@@ -4,10 +4,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.peercoin.core.PaymentEntity;
 
 import java.io.IOException;
 
-public class Currency {
+public class Currency implements PaymentEntity {
     protected String name;
     protected String ticker;
     protected String className;

@@ -13,8 +13,7 @@ import com.peercoin.web.repositories.CryptoCoinRepository;
 import com.peercoin.web.repositories.FiatMethodRepository;
 import com.peercoin.web.repositories.FiatRepository;
 import com.peercoin.web.repositories.UserRepository;
-import com.peercoin.web.services.IOrderService;
-import com.peercoin.web.services.OfferService;
+import com.peercoin.web.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,13 +35,13 @@ public class OrderController {
     private IOrderService orderService;
 
     @Autowired
-    private CryptoCoinRepository cryptoCoinRepository;
+    private IFiatMethodService fiatMethodService;
 
     @Autowired
-    private FiatRepository fiatRepository;
+    private ICryptoCoinService cryptoCoinService;
 
     @Autowired
-    private FiatMethodRepository fiatMethodRepository;
+    private IFiatService fiatService;
 
     @Autowired
     private OfferService offerService;
@@ -57,9 +56,9 @@ public class OrderController {
                 UserDetails userDetails=(UserDetails) authentication.getPrincipal();
                 model.addAttribute("username",userDetails.getUsername());
                 model.addAttribute("order",new OrderDto());
-                model.addAttribute("cryptos",cryptoCoinRepository.findAll());
-                model.addAttribute("fiats",fiatRepository.findAll());
-                model.addAttribute("methods",fiatMethodRepository.findAll());
+                model.addAttribute("cryptos",cryptoCoinService.getAllCryptoCoins());
+                model.addAttribute("fiats",fiatService.getAllFiat());
+                model.addAttribute("methods",fiatMethodService.getAllPaymentMethods());
                 return "order_form";
             }
         }

@@ -1,6 +1,7 @@
 package com.peercoin.web.services;
 
 import com.peercoin.core.currency.Currency;
+import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;
 import com.peercoin.core.currency.exceptions.CurrencyNameExistsException;
 import com.peercoin.core.currency.exceptions.CurrencyTickerExistsException;
 import com.peercoin.core.currency.services.ICurrencyService;
@@ -23,9 +24,9 @@ public class CurrencyService implements ICurrencyService {
     private Logger logger= Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     @Autowired
-    private CryptoCoinRepository cryptoRepository;
+    protected CryptoCoinRepository cryptoRepository;
     @Autowired
-    private FiatRepository fiatRepository;
+    protected FiatRepository fiatRepository;
 
     @Override
     public Currency addCurrency(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException {
@@ -38,6 +39,12 @@ public class CurrencyService implements ICurrencyService {
         }
         return potential;
     }
+
+    @Override
+    public Currency getByName(String name) {
+        return null;
+    }
+
 
     public void checkCurrencyExistence(Currency potential) throws CurrencyNameExistsException, CurrencyTickerExistsException {
         checkIfCurrencyNameExists(potential.getName());

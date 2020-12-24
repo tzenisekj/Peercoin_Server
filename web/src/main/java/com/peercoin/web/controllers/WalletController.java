@@ -1,9 +1,9 @@
 package com.peercoin.web.controllers;
 
-import com.peercoin.web.models.CryptoCoin;
+import com.peercoin.core.currency.CryptoCoin;
 import com.peercoin.web.models.User;
-import com.peercoin.web.repositories.CryptoCoinRepository;
 import com.peercoin.web.repositories.UserRepository;
+import com.peercoin.web.services.ICryptoCoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,19 +22,20 @@ public class WalletController {
     private UserRepository userRepository;
 
     @Autowired
-    private CryptoCoinRepository cryptoCoinRepository;
+    private ICryptoCoinService cryptoCoinService;
 
     @GetMapping
     public String getWalletView(Authentication authentication, Model model) {
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         User user = userRepository.getByUsername(userDetails.getUsername());
         model.addAttribute("wallet", user.getWallet());
-        List<CryptoCoin> cryptos=cryptoCoinRepository.findAll();
+        List<CryptoCoin> cryptos=cryptoCoinService.getAllCryptoCoins();
         cryptos.forEach(crypto -> {
             if (!user.getWallet().containsKey(crypto)) {
                 user.insertWalletItem(crypto.getName(),0.0);
             }
         });
+        userRepository.save(user);
         model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("cryptos", cryptoCoinRepository.findAll());
         return "wallet";

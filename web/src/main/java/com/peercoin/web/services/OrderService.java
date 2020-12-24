@@ -1,11 +1,13 @@
 package com.peercoin.web.services;
 
+import com.peercoin.core.currency.CryptoCoin;
 import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;
 import com.peercoin.core.currency.exceptions.PaymentMethodNameDoesNotExistException;
 import com.peercoin.core.paymentmethods.PaymentMethod;
 import com.peercoin.web.exceptions.IdDoesNotExist;
-import com.peercoin.web.models.*;
+import com.peercoin.web.models.Order;
+import com.peercoin.web.models.User;
 import com.peercoin.web.models.dtos.OrderDto;
 import com.peercoin.web.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +29,24 @@ public class OrderService implements IOrderService {
     private UserRepository userRepository;
 
     @Autowired
-    private CryptoCoinRepository cryptoCoinRepository;
+    private ICryptoCoinService cryptoCoinService;
 
     @Autowired
-    private FiatMethodRepository fiatMethodRepository;
+    private IFiatService fiatService;
 
     @Autowired
-    private FiatRepository fiatRepository;
+    private IFiatMethodService fiatMethodService;
 
     @Override
     public Order submitOrder(OrderDto orderDto, String type, String username)
             throws CurrencyDoesNotExistException, PaymentMethodNameDoesNotExistException {
         User user=userRepository.getByUsername(username);
-        CryptoCoin cryptoCoin=cryptoCoinRepository.getByName(orderDto.getCrypto());
-        Currency currency=fiatRepository.getByName(orderDto.getCurrency());
+        CryptoCoin cryptoCoin=(CryptoCoin) cryptoCoinService.getByName(orderDto.getCrypto());
+        Currency currency=fiatService.getByName(orderDto.getCurrency());
         if (currency==null){
-            currency=cryptoCoinRepository.getByName(orderDto.getCurrency());
+            currency=cryptoCoinService.getByName(orderDto.getCurrency());
         }
-        FiatMethod fiatMethod=fiatMethodRepository.findByName(orderDto.getPaymentMethod());
+        PaymentMethod fiatMethod=fiatMethodService.findByName(orderDto.getPaymentMethod());
         verifyCurrencyExistence(cryptoCoin,currency);
         verifyPaymentMethodExistence(fiatMethod);
 

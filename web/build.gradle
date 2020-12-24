@@ -18,14 +18,26 @@ task copyCore(type:Copy) {
 	from('../core/build/libs') {
 		include '*.jar'
 	}
+	from('../integration/build/libs') {
+		include '*.jar'
+	}
 	into 'lib/'
+}
+task copyPlugins(type:Copy) {
+	from('../plugins') {
+		include '*.py'
+	}
+	into 'src/main/resources'
 }
 
 compileJava.dependsOn copyCore
+compileJava.dependsOn copyPlugins
 
 dependencies {
 	implementation project(':core')
 	implementation name: 'core-0.0.1-SNAPSHOT'
+	implementation project(':integration')
+	implementation name: 'integration-1.0-SNAPSHOT-all'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'

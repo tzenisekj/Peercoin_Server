@@ -4,3 +4,6 @@ rabbit.username=guest
 rabbit.password=guest
 
 rabbit.host=localhost
+
+registry.python.currencies=Bitcoin
+registry.python.methods=Paypal

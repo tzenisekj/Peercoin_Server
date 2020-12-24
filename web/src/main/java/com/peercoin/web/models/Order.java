@@ -4,6 +4,8 @@ import com.peercoin.core.currency.Currency;
 import com.peercoin.web.pojos.OrderType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.peercoin.core.currency.CryptoCoin;
+import com.peercoin.core.paymentmethods.PaymentMethod;
 
 @Document
 public class Order {
@@ -16,7 +18,7 @@ public class Order {
 
     private CryptoCoin crypto;
     private Currency payment;
-    private FiatMethod method;
+    private PaymentMethod method;
 
     private double exchangeRate;
     private double min;
@@ -95,11 +97,11 @@ public class Order {
         this.max = max;
     }
 
-    public FiatMethod getMethod() {
+    public PaymentMethod getMethod() {
         return method;
     }
 
-    public void setMethod(FiatMethod method) {
+    public void setMethod(PaymentMethod method) {
         this.method = method;
     }
 

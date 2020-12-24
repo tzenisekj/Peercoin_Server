@@ -1,0 +1,37 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'java-library'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
+}
+task copyCore(type:Copy) {
+    from('../core/build/libs') {
+        include '*.jar'
+    }
+    into 'lib/'
+}
+
+compileJava.dependsOn copyCore
+
+dependencies {
+    implementation project(':core')
+    implementation name: 'core-0.0.1-SNAPSHOT'
+    runtimeClasspath fileTree('../plugins') { include '*.py' }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeClasspath fileTree('src/test/python') { include '*.py' }
+    // https://mvnrepository.com/artifact/org.python/jython
+    compile group: 'org.python', name: 'jython-standalone', version: '2.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
