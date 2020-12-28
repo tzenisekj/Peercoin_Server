@@ -37,7 +37,7 @@ public class WalletController {
         });
         userRepository.save(user);
         model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("cryptos", cryptoCoinRepository.findAll());
+        model.addAttribute("cryptos", cryptoCoinService.getAllCryptoCoins());
         return "wallet";
     }
 }
