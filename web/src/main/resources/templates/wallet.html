@@ -22,7 +22,8 @@
                 <th:block th:each="item : ${wallet}">
                     <tr>
                         <td th:text="${item.key}"></td>
-                        <td th:text="${item.value}"></td>
+                        <td th:text="${item.value.value}"></td>
+                        <td th:text="${item.value.address}"></td>
                     </tr>
                 </th:block>
             </table>

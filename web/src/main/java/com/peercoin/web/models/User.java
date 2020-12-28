@@ -1,5 +1,7 @@
 package com.peercoin.web.models;
 
+import com.peercoin.core.currency.CurrencyMethods;
+import com.peercoin.web.pojos.WalletContents;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,7 +20,7 @@ public class User {
     private String email;
     private String phoneNumber;
     private List<String> roles;
-    private Map<String,Double> wallet;
+    private Map<String, WalletContents> wallet;
 
     private List<Notifiable> storedNotifiables;
 
@@ -80,11 +82,12 @@ public class User {
         roles.add(role);
     }
 
-    public Map<String, Double> getWallet() {
+    public Map<String, WalletContents> getWallet() {
         return wallet;
     }
 
-    public void insertWalletItem(String cryptoCoin, double value) {
-        this.wallet.put(cryptoCoin,value);
+    public void insertWalletItem(String cryptoCoin, double value, CurrencyMethods currencyMethods) {
+        WalletContents walletContents = new WalletContents(value, currencyMethods.createAddress());
+        this.wallet.put(cryptoCoin, walletContents);
     }
 }

@@ -42,7 +42,7 @@ public class UserService implements IUserService {
     public void populateCryptos(User user) {
         List<CryptoCoin> cryptos=cryptoCoinService.getAllCryptoCoins();
         for (CryptoCoin crypto : cryptos) {
-            user.insertWalletItem(crypto.getName(), 0.0);
+            user.insertWalletItem(crypto.getName(), 0.0, crypto.getCurrencyMethods());
         }
     }
 }
