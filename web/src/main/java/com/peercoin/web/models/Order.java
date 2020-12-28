@@ -1,6 +1,7 @@
 package com.peercoin.web.models;
 
 import com.peercoin.core.currency.Currency;
+import com.peercoin.web.pojos.NameTickerEntity;
 import com.peercoin.web.pojos.OrderType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,8 +17,8 @@ public class Order {
 
     private boolean buy;
 
-    private CryptoCoin crypto;
-    private Currency payment;
+    private NameTickerEntity crypto;
+    private NameTickerEntity payment;
     private PaymentMethod method;
 
     private double exchangeRate;
@@ -42,20 +43,26 @@ public class Order {
         this.initiator = initiator;
     }
 
-    public CryptoCoin getCrypto() {
+    public NameTickerEntity getCrypto() {
         return crypto;
     }
 
     public void setCrypto(CryptoCoin crypto) {
-        this.crypto = crypto;
+        NameTickerEntity nameTickerEntity = new NameTickerEntity();
+        nameTickerEntity.ticker = crypto.getTicker();
+        nameTickerEntity.name = crypto.getName();
+        this.crypto = nameTickerEntity;
     }
 
-    public Currency getPayment() {
+    public NameTickerEntity getPayment() {
         return payment;
     }
 
     public void setPayment(Currency payment) {
-        this.payment = payment;
+        NameTickerEntity nameTickerEntity = new NameTickerEntity();
+        nameTickerEntity.name = payment.getName();
+        nameTickerEntity.ticker = payment.getTicker();
+        this.payment = nameTickerEntity;
     }
 
     public OrderType getOrderType() {

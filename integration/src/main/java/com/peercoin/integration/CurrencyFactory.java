@@ -27,12 +27,12 @@ public class CurrencyFactory {
         Currency currency = null;
         if (jythonCurrency.getClassName().equalsIgnoreCase("crypto")) {
             currency = new CryptoCoin();
-            currency.setCurrencyMethods(jythonCurrency.getCurrencyMethods());
 
         } else if (jythonCurrency.getClassName().equalsIgnoreCase("fiat")) {
             currency = new Fiat();
         }
         assert currency != null;
+        currency.setCurrencyMethods(jythonCurrency.getCurrencyMethods());
         currency.setName(jythonCurrency.getName());
         currency.setTicker(jythonCurrency.getTicker());
 
