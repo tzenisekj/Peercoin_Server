@@ -12,6 +12,7 @@ public class Currency implements PaymentEntity {
     protected String name;
     protected String ticker;
     protected String className;
+    protected CurrencyMethods currencyMethods;
 
 
     public String getName() {
@@ -47,6 +48,14 @@ public class Currency implements PaymentEntity {
     public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper=new ObjectMapper();
         return objectMapper.writeValueAsString(this);
+    }
+
+    public CurrencyMethods getCurrencyMethods() {
+        return currencyMethods;
+    }
+
+    public void setCurrencyMethods(CurrencyMethods currencyMethods) {
+        this.currencyMethods = currencyMethods;
     }
 
     @Override

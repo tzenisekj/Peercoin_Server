@@ -1,4 +1,5 @@
 from com.peercoin.integration.currency import JythonCurrency
+from currency_methods_impl import CurrencyMethodsImpl
 
 class Monero(JythonCurrency):
 
@@ -13,3 +14,6 @@ class Monero(JythonCurrency):
 
     def getClassName(self):
         return "crypto"
+
+    def getCurrencyMethods(self):
+        return CurrencyMethodsImpl()

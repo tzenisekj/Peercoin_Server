@@ -27,9 +27,20 @@ task copyPlugins(type:Copy) {
 	from('../plugins') {
 		include '*.py'
 	}
+	from('../config/web') {
+		include '*'
+	}
 	into 'src/main/resources'
 }
 
+task removePlugins(type: Delete) {
+	delete fileTree('src/main/resources') {
+		include '*.py'
+	}
+}
+
+clean.dependsOn removePlugins
+copyPlugins.dependsOn removePlugins
 compileJava.dependsOn copyCore
 compileJava.dependsOn copyPlugins
 

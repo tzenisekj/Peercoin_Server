@@ -1,4 +1,5 @@
 from com.peercoin.integration.currency import JythonCurrency
+from currency_methods_impl import CurrencyMethodsImpl
 
 class UnitedStatesDollar(JythonCurrency):
 
@@ -13,3 +14,6 @@ class UnitedStatesDollar(JythonCurrency):
 
     def getClassName(self):
         return "fiat"
+
+    def getCurrencyMethods(self):
+        return CurrencyMethodsImpl()

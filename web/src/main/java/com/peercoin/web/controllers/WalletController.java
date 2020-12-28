@@ -29,13 +29,6 @@ public class WalletController {
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         User user = userRepository.getByUsername(userDetails.getUsername());
         model.addAttribute("wallet", user.getWallet());
-        List<CryptoCoin> cryptos=cryptoCoinService.getAllCryptoCoins();
-        cryptos.forEach(crypto -> {
-            if (!user.getWallet().containsKey(crypto)) {
-                user.insertWalletItem(crypto.getName(),0.0);
-            }
-        });
-        userRepository.save(user);
         model.addAttribute("username",userDetails.getUsername());
         model.addAttribute("cryptos", cryptoCoinService.getAllCryptoCoins());
         return "wallet";

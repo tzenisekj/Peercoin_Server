@@ -24,19 +24,9 @@ public class StartupHouseKeeper {
 
     @Value("${registry.python.methods}")
     private String methods;
-//
-//    @Autowired
-//    NonPersistentCryptoCoinRepository cryptoCoinRepository;
-//
-//    @Autowired
-//    NonPersistentFiatRepository fiatRepository;
-//
-//    @Autowired
-//    NonPersistentPaymentMethodRepository paymentMethodRepository;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
-        logger.log(Level.WARNING, "hit context refresh");
         NonPersistentRepositories repositories = NonPersistentRepositories.getInstance();
         NonPersistentRepository<CryptoCoin> cryptoCoinRepository = repositories.cryptoRepository;
         NonPersistentRepository<Fiat> fiatRepository = repositories.fiatRepository;
@@ -44,7 +34,6 @@ public class StartupHouseKeeper {
         CurrencyFactory currencyFactory = CurrencyFactory.getInstance();
         String[] currencies = this.currencies.split(",");
         for (String currency : currencies) {
-            logger.log(Level.WARNING, currency);
             Currency module = currencyFactory.createCurrency(currency);
             if (module instanceof CryptoCoin) {
                 cryptoCoinRepository.insert((CryptoCoin) module);
@@ -54,11 +43,8 @@ public class StartupHouseKeeper {
         }
         String[] paymentMethods = methods.split(",");
         for (String method : paymentMethods) {
-            logger.log(Level.WARNING, method);
             PaymentMethod module = currencyFactory.createPaymentMethod(method);
             paymentMethodRepository.insert(module);
         }
-        System.out.println("end context refresh event");
-
     }
 }
