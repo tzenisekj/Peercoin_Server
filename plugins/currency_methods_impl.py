@@ -19,3 +19,6 @@ class CurrencyMethodsImpl(CurrencyMethods):
     
     def getAddressUnconfirmed(self, address):
         return 0.0
+
+    def getLastPrice(self):
+        return 0.0
