@@ -36,4 +36,11 @@ public class TestBitcoinConnectivity {
         CurrencyFactory currencyFactory = CurrencyFactory.getInstance();
         return currencyFactory.createCurrency("Bitcoin");
     }
+
+    @Test
+    public void temp() {
+        Currency currency = createBitcoinCurrency();
+        float currPrice = currency.getCurrencyMethods().getLastPrice();
+        assert currPrice != 0.0;
+    }
 }

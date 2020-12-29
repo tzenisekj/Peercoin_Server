@@ -9,4 +9,5 @@ public interface CurrencyMethods {
     boolean pay(String destination, int amount);
     float getAddressUnconfirmed(String address);
     float getAddressConfirmed(String address);
+    float getLastPrice();
 }
