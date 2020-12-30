@@ -19,6 +19,15 @@ task copyCore(type:Copy) {
     into 'lib/'
 }
 
+task copyPlugins(type:Copy) {
+    from ('../plugins/lib') {
+        include '*/**'
+    }
+
+    into 'src/test/resources'
+}
+
+compileJava.dependsOn copyPlugins
 compileJava.dependsOn copyCore
 
 dependencies {

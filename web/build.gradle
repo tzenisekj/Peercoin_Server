@@ -27,6 +27,9 @@ task copyPlugins(type:Copy) {
 	from('../plugins') {
 		include '*.py'
 	}
+	from ('../plugins/lib') {
+		include '*/**'
+	}
 	from('../config/web') {
 		include '*'
 	}

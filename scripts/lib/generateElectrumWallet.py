@@ -3,6 +3,7 @@ import subprocess
 import json
 import os
 import platform
+import time
 
 if platform.system() == 'Linux':
     electrum = 'electrum'
