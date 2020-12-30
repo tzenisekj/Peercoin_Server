@@ -36,25 +36,14 @@ class BitcoinCurrencyMethods(CurrencyMethods):
     def getAddressConfirmed(self, address):
         return float(getAddressBalance(self.http_client, address)['confirmed'])
 
-    # TODO: need to return live data; need to
     def getLastPrice(self):
-        # url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
-
-        # url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/map'
-        # Map
-        # Note: in parame need start and limit.
-        # Displays: first/last_historical_data, name and symbol. No price.
-
-        # url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5000'
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
             'start': '1',
-            # 'limit':'5000',
             'convert': 'USD'
         }
         headers = {
             'Accepts': 'application/json',
-            # Preferred method
             'X-CMC_PRO_API_KEY': '65a4d8a5-5728-48b4-8b0b-81c35e62251a',
         }
 
