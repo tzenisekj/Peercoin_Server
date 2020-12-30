@@ -3,6 +3,7 @@ package com.peercoin.web.controllers;
 import com.peercoin.web.models.Offer;
 import com.peercoin.web.models.Order;
 import com.peercoin.web.models.User;
+import com.peercoin.web.models.displayObjects.OfferDisplayObject;
 import com.peercoin.web.models.dtos.MessageDto;
 import com.peercoin.web.pojos.Message;
 import com.peercoin.web.repositories.OfferRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,18 +52,34 @@ public class OfferController {
         User user = userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
         model.addAttribute("user", user);
         model.addAttribute("offer", offer);
+        model.addAttribute("isBuyer", user.getId().equals(offer.getBuyer()));
         model.addAttribute("messageDto", new MessageDto());
         return "messages";
     }
 
     @GetMapping("/all")
     public String offers(Model model, Authentication authentication) {
-        List<Offer> buyerOffers = offerRepository.getByBuyer(userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername()));
-        List<Offer> sellerOffers = offerRepository.getBySeller(userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername()));
+        User user = userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
+        List<Offer> buyerOffers = offerRepository.getByBuyer(user.getId());
+        List<Offer> sellerOffers = offerRepository.getBySeller(user.getId());
+        List<OfferDisplayObject> BODOs = new ArrayList<>();
+        List<OfferDisplayObject> SODOs = new ArrayList<>();
+        for (Offer offer : buyerOffers) {
+            if (!offer.isCompleted()) {
+                User seller = userRepository.findById(offer.getSeller()).get();
+                BODOs.add(new OfferDisplayObject(offer, user, seller));
+            }
+        }
+        for (Offer offer : sellerOffers) {
+            if (!offer.isCompleted()) {
+                User buyer = userRepository.findById(offer.getSeller()).get();
+                SODOs.add(new OfferDisplayObject(offer, buyer, user));
+            }
+        }
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
         model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("buyerOffers", buyerOffers);
-        model.addAttribute("sellerOffers", sellerOffers);
+        model.addAttribute("buyerOffers", BODOs);
+        model.addAttribute("sellerOffers", SODOs);
         return "offers";
     }
 }

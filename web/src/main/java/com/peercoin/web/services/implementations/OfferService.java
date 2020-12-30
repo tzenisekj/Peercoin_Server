@@ -26,12 +26,12 @@ public class OfferService implements IOfferService {
         offer.setAmount(retrieveOfferAmount(offerDto,order.getExchangeRate()));
         offer.setOrder(order);
         if (order.getOrderType()== OrderType.BUY) {
-            offer.setBuyer(buyer);
-            offer.setSeller(order.getInitiator());
+            offer.setBuyer(order.getInitiator());
+            offer.setSeller(buyer.getId());
         }
         else {
-            offer.setBuyer(order.getInitiator());
-            offer.setSeller(buyer);
+            offer.setBuyer(buyer.getId());
+            offer.setSeller(order.getInitiator());
         }
         offerRepository.save(offer);
         return offer;
@@ -39,9 +39,9 @@ public class OfferService implements IOfferService {
 
     private double retrieveOfferAmount(OfferDto offerDto, double exchangeRate) {
         if (offerDto.getType().equalsIgnoreCase("crypto")){
-            return offerDto.getAmount()*exchangeRate;
-        } else { //if offerDto.getType().equalsIgnoreCase("payment"))
             return offerDto.getAmount();
+        } else { //if offerDto.getType().equalsIgnoreCase("payment"))
+            return offerDto.getAmount()/exchangeRate;
         }
     }
 }

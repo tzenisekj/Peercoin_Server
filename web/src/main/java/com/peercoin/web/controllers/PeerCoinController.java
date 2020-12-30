@@ -1,7 +1,10 @@
 package com.peercoin.web.controllers;
 
 import com.peercoin.web.models.Order;
+import com.peercoin.web.models.User;
+import com.peercoin.web.models.displayObjects.OrderDisplayObject;
 import com.peercoin.web.pojos.OrderType;
+import com.peercoin.web.repositories.UserRepository;
 import com.peercoin.web.services.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,6 +22,10 @@ import java.util.List;
 public class PeerCoinController {
     @Autowired
     private IOrderService orderService;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/")
     public String homepage(Model model, Authentication authentication) {
         if (authentication != null){
@@ -30,14 +37,18 @@ public class PeerCoinController {
             model.addAttribute("signedin",false);
         }
         List<Order> orders=orderService.getAllOrders();
-        List<Order> buyOrders=new ArrayList<>();
-        List<Order> sellOrders=new ArrayList<>();
+        List<OrderDisplayObject> buyOrders=new ArrayList<>();
+        List<OrderDisplayObject> sellOrders=new ArrayList<>();
         for (Order order:orders) {
-            if (order.getOrderType()== OrderType.BUY){
-                buyOrders.add(order);
-            }
-            if (order.getOrderType() == OrderType.SELL) {
-                sellOrders.add(order);
+            if (order.isActive()) {
+                User initiator = userRepository.findById(order.getInitiator()).get();
+                OrderDisplayObject odo = new OrderDisplayObject(order, initiator);
+                if (order.getOrderType() == OrderType.BUY) {
+                    buyOrders.add(odo);
+                }
+                if (order.getOrderType() == OrderType.SELL) {
+                    sellOrders.add(odo);
+                }
             }
         }
         model.addAttribute("buyOrders",buyOrders);

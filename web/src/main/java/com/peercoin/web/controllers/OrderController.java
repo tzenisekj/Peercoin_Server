@@ -6,6 +6,7 @@ import com.peercoin.web.exceptions.IdDoesNotExist;
 import com.peercoin.web.models.Offer;
 import com.peercoin.web.models.Order;
 import com.peercoin.web.models.User;
+import com.peercoin.web.models.displayObjects.OrderDisplayObject;
 import com.peercoin.web.models.dtos.OfferDto;
 import com.peercoin.web.models.dtos.OrderDto;
 import com.peercoin.web.pojos.OrderType;
@@ -76,7 +77,6 @@ public class OrderController {
     @GetMapping("/{id}")
     public String viewOrder(@PathVariable("id") String id,Model model,Authentication authentication) {
         Order order;
-        Offer offer;
         try {
             if (authentication != null){
                 UserDetails userDetails=(UserDetails) authentication.getPrincipal();
@@ -91,9 +91,11 @@ public class OrderController {
             logger.log(Level.INFO,e.getMessage());
             return "/error?error=iddoesnotexist";
         }
+        User initiator = userRepository.findById(order.getInitiator()).get();
+        OrderDisplayObject odo = new OrderDisplayObject(order, initiator);
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
         model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("order",order);
+        model.addAttribute("order",odo);
         model.addAttribute("offer",new OfferDto());
         return "order";
     }
@@ -104,26 +106,48 @@ public class OrderController {
             User buyer = userRepository.getByUsername(userDetails.getUsername());
             Order order = orderService.getOrder(id);
             offerService.submitOffer(offerdto, order , buyer);
-            return "redirect:/order/" + id + "?submission=success";
+            return "redirect:/order/all?submission=success&message=order+placed";
         } catch(IdDoesNotExist e) {
             logger.log(Level.WARNING,e.getMessage());
-            return "redirect:/order/" + id + "?submission=error&error=orderdoesnotexist";
+            return "redirect:/order/all?submission=error&error=orderdoesnotexist";
         }
+    }
+
+    @PostMapping("/{id}/markinactive")
+    public String markInactive(@PathVariable("id") String id, Authentication authentication) {
+        String returnValue;
+        try {
+            boolean success = orderService.markInactive(id);
+            if (success) {
+                returnValue = "redirect:/order/all?message=order+deactivated";
+            }
+            else {
+                returnValue = "redirect:/order/all?message=order+already+deactivated";
+            }
+        } catch (IdDoesNotExist e) {
+            logger.log(Level.WARNING, e.getMessage());
+            returnValue = "redirect:/order/all?submission=error&error=orderdoesnotexist";
+        }
+        return returnValue;
     }
 
     @GetMapping("/all")
     public String viewAllOrders(Model model, Authentication authentication) {
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        User user = userRepository.getByUsername(username);
 
-        List<Order> orders = orderService.getAllOrders();
-        List<Order> buyOrders = new ArrayList<>();
-        List<Order> sellOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.getInitiator().getUsername().equals(username)) {
+        List<Order> orders=orderService.getAllOrders();
+        List<OrderDisplayObject> buyOrders=new ArrayList<>();
+        List<OrderDisplayObject> sellOrders=new ArrayList<>();
+        for (Order order:orders) {
+            if (order.isActive()) {
+                User initiator = userRepository.findById(order.getInitiator()).get();
+                OrderDisplayObject odo = new OrderDisplayObject(order, initiator);
                 if (order.getOrderType() == OrderType.BUY) {
-                    buyOrders.add(order);
-                } else {
-                    sellOrders.add(order);
+                    buyOrders.add(odo);
+                }
+                if (order.getOrderType() == OrderType.SELL) {
+                    sellOrders.add(odo);
                 }
             }
         }

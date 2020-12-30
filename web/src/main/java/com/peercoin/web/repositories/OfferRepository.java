@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface OfferRepository extends MongoRepository<Offer,String> {
-    List<Offer> getByBuyer(@Param("buyer") User buyer);
-    List<Offer> getBySeller(@Param("seller") User seller);
+    List<Offer> getByBuyer(@Param("buyer") String buyer);
+    List<Offer> getBySeller(@Param("seller") String seller);
     Offer getById(@Param("id") String id);
 }

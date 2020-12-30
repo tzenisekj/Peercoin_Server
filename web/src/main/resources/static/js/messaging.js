@@ -1,22 +1,25 @@
-async function sendMessage(offerId, user, message) {
+async function sendMessage(offerId, user, message, key) {
     let url = window.location.origin + "/api/v1/chat/" + offerId;
     let toSend = {
         "sender": user,
         "message": message
     };
-    await fetch(url, {
+    fetch(url, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json;charset=utf-8"
+            "Content-Type": "application/json;charset=utf-8",
+            "credentials": key
         },
         body: JSON.stringify(toSend)
     })
     .then(response => {
-        receiveMessage(offerId,user);
+        if (response.ok) {
+            receiveMessage(offerId,user, key);
+        }
     });
 }
 
-function receiveMessage(offerId, user) {
+async function receiveMessage(offerId, user, key) {
     let msg_history = document.getElementsByClassName("msg_history")[0];
     let url = window.location.origin + "/api/v1/chat/" + offerId;
     fetch(url)
@@ -58,6 +61,45 @@ function receiveMessage(offerId, user) {
     });
 }
 
+async function escrow() {
+    let offerId = document.getElementById("messaging").dataset.offer;
+    let url = window.location.origin + "/api/v1/chat/" + offerId + "/escrow";
+    basicUserFunctions(url);
+}
+
+async function fiatsent() {
+    let offerId = document.getElementById("messaging").dataset.offer;
+    let url = window.location.origin + "/api/v1/chat/" + offerId + "/marksent";
+    basicUserFunctions(url);
+}
+
+async function fiatreceived() {
+    let offerId = document.getElementById("messaging").dataset.offer;
+    let url = window.location.origin + "/api/v1/chat/" + offerId + "/markreceived";
+    basicUserFunctions(url);  
+}
+
+async function basicUserFunctions(url) {
+    let username = document.getElementById("messaging").dataset.user;
+    let key = document.getElementById("messaging").dataset.key;
+    await fetch(url, {
+        method: "POST",
+        headers: {
+            "credentials": key
+        }
+    })
+    .then(response => response.json())
+    .then(json => {
+        console.log(json);
+        let status = json.status;
+        if (status == "Ok") {
+            location.reload();
+        } else {
+            alert("Server Error:\n" + json.status);
+        }
+    });
+}
+
 function removeAllChildNodes(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
@@ -67,16 +109,18 @@ function removeAllChildNodes(parent) {
 function send() {
     let offerId = document.getElementById("messaging").dataset.offer;
     let username = document.getElementById("messaging").dataset.user;
+    let key = document.getElementById("messaging").dataset.key;
     let message = document.getElementById("text").value;
-    sendMessage(offerId,username, message);    
+    sendMessage(offerId,username, message, key);
     document.getElementById("text").value = "";
 }
 
 async function initiateMessaging() {
     let offerId = document.getElementById("messaging").dataset.offer;
     let username = document.getElementById("messaging").dataset.user;
+    let key = document.getElementById("messaging").dataset.key;
     while(true) {
-        receiveMessage(offerId, username);
+        receiveMessage(offerId, username, key);
         await new Promise(r => setTimeout(r, 3000));
     }
 }

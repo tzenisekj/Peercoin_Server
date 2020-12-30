@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -58,11 +59,12 @@ public class OrderService implements IOrderService {
         order.setCrypto(cryptoCoin);
         order.setPayment(currency);
         order.setOrderType(type);
-        order.setInitiator(user);
+        order.setInitiator(user.getId());
         order.setMethod(fiatMethod);
         order.setExchangeRate(orderDto.getExchangeRate());
         order.setMax(orderDto.getMax());
         order.setMin(orderDto.getMin());
+        order.setRemoveOnOfferCompletion(orderDto.isRemoveOnOfferCompletion());
         switch(orderDto.getBuy().toLowerCase()) {
             case "buy":
                 order.setBuy(true);
@@ -83,6 +85,22 @@ public class OrderService implements IOrderService {
     @Override
     public Order getOrder(String id) throws IdDoesNotExist {
         return orderRepository.findById(id).orElseThrow(() -> new IdDoesNotExist("id " + id + "does not exist"));
+    }
+
+    @Override
+    public boolean markInactive(String id) throws IdDoesNotExist {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (!order.isActive()) {
+                return false;
+            }
+            order.setActive(false);
+            orderRepository.save(order);
+            return true;
+        } else {
+            throw new IdDoesNotExist("id " + id + " does not exist in OrderRepository");
+        }
     }
 
     private void verifyCurrencyExistence(CryptoCoin cryptoCoin, Currency currency) throws CurrencyDoesNotExistException,PaymentMethodNameDoesNotExistException {

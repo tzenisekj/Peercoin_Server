@@ -8,6 +8,7 @@
     <script th:src="@{/js/messaging.js}"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" href="/css/messages-style.css">
+    <script th:if="${signedin}" th:src="@{/js/notification.js}"></script>
 
 </head>
 <body class="bg-funky" th:onload="'initiateMessaging()'">
@@ -15,13 +16,26 @@
 
 <div class="container">
     <h3 class="heading text-center">Chat Bubble</h3>
-    <div class="messaging" th:data-user="${user.getUsername()}" th:data-offer="${offer.getId()}" id="messaging">
+    <div class="messaging" th:data-key="${user.getRestApiKey()}" th:data-user="${user.getUsername()}" th:data-offer="${offer.getId()}" id="messaging">
         <div class="inbox_msg">
 
             <div class="mesgs">
                 <div class="msg_history">
                 </div>
 
+            </div>
+        </div>
+        <div class="basic-actions">
+            <div class="not-escrowed" th:unless="${offer.isEscrowed()}">
+                <a class="btn btn-primary" th:unless="${isBuyer}" id="escrow" onclick="escrow()">escrow</a>
+            </div>
+            <div class="escrowed" th:if="${offer.isEscrowed()}">
+                <div th:unless="${isBuyer}">
+                    <a class="btn btn-primary" th:unless="${offer.isReceived()}" onclick="fiatreceived()" id="received">Fiat Received</a>
+                </div>
+                <div th:if="${isBuyer}">
+                    <a class="btn btn-primary" th:unless="${offer.isSent()}" onclick="fiatsent()" id="sent">Fiat Sent</a>
+                </div>
             </div>
         </div>
         <div class="input">

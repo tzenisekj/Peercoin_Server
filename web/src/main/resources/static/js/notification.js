@@ -21,10 +21,3 @@ function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
-
-// async function initiateNotification() {
-//     while (true) {
-//         receiveNotification();
-//         await new Promise(r => setTimeout(r, 3000));
-//     }
-// }

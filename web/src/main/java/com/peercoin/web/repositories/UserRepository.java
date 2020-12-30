@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends MongoRepository<User,String> {
     User getByUsername(@Param("username") String username);
+    User getByRestApiKey(@Param("restApiKey") String restApiKey);
 }

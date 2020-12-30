@@ -5,9 +5,14 @@ public class OrderDto {
     private String paymentMethod;
     private String currency;
     private String buy;
+    private boolean removeOnOfferCompletion;
     private double exchangeRate;
     private double min;
     private double max;
+
+    public OrderDto() {
+        removeOnOfferCompletion = true;
+    }
 
     public String getCrypto() {
         return crypto;
@@ -63,5 +68,13 @@ public class OrderDto {
 
     public void setBuy(String buy) {
         this.buy = buy;
+    }
+
+    public boolean isRemoveOnOfferCompletion() {
+        return removeOnOfferCompletion;
+    }
+
+    public void setRemoveOnOfferCompletion(boolean removeOnOfferCompletion) {
+        this.removeOnOfferCompletion = removeOnOfferCompletion;
     }
 }

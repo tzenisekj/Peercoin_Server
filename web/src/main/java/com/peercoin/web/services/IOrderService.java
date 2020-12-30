@@ -13,4 +13,5 @@ public interface IOrderService {
     Order submitOrder(OrderDto orderDto, String type, String username) throws UsernameNotFoundException, CurrencyDoesNotExistException, PaymentMethodNameDoesNotExistException;
     List<Order> getAllOrders();
     Order getOrder(String id) throws IdDoesNotExist;
+    boolean markInactive(String id) throws IdDoesNotExist;
 }

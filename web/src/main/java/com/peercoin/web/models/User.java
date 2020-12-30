@@ -5,6 +5,7 @@ import com.peercoin.web.pojos.WalletContents;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +20,13 @@ public class User {
     private String password;
     private String email;
     private String phoneNumber;
-    private List<String> roles;
     private Map<String, WalletContents> wallet;
 
     private List<Notifiable> storedNotifiables;
+
+    private List<String> roles;
+    private String restApiKey;
+    private LocalDateTime keyGenerationTime;
 
     public User() {
         roles=new ArrayList<>();
@@ -82,12 +86,24 @@ public class User {
         roles.add(role);
     }
 
+    public String getRestApiKey() {
+        return restApiKey;
+    }
+
+    public void setRestApiKey(String restApiKey) {
+        this.restApiKey = restApiKey;
+    }
+
     public Map<String, WalletContents> getWallet() {
         return wallet;
     }
 
     public void insertWalletItem(String cryptoCoin, double value, CurrencyMethods currencyMethods) {
         WalletContents walletContents = new WalletContents(value, currencyMethods.createAddress());
+        this.wallet.put(cryptoCoin, walletContents);
+    }
+
+    public void replaceWalletItem(String cryptoCoin, WalletContents walletContents) {
         this.wallet.put(cryptoCoin, walletContents);
     }
 }

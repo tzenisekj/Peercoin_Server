@@ -13,7 +13,7 @@ public class Order {
     @Id
     private String id;
 
-    private User initiator;
+    private String initiator;
 
     private boolean buy;
 
@@ -27,6 +27,14 @@ public class Order {
 
     private OrderType orderType;
 
+    private boolean active;
+    private boolean removeOnOfferCompletion;
+
+    public Order() {
+        active = true;
+        removeOnOfferCompletion = false;
+    }
+
     public String getId() {
         return id;
     }
@@ -35,11 +43,11 @@ public class Order {
         this.id = id;
     }
 
-    public User getInitiator() {
+    public String getInitiator() {
         return initiator;
     }
 
-    public void setInitiator(User initiator) {
+    public void setInitiator(String initiator) {
         this.initiator = initiator;
     }
 
@@ -118,5 +126,21 @@ public class Order {
 
     public void setBuy(boolean buy) {
         this.buy = buy;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isRemoveOnOfferCompletion() {
+        return removeOnOfferCompletion;
+    }
+
+    public void setRemoveOnOfferCompletion(boolean removeOnOfferCompletion) {
+        this.removeOnOfferCompletion = removeOnOfferCompletion;
     }
 }

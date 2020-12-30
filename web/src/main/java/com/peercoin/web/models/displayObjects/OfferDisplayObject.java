@@ -1,18 +1,14 @@
-package com.peercoin.web.models;
+package com.peercoin.web.models.displayObjects;
 
-import com.peercoin.web.pojos.Message;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.peercoin.web.models.Offer;
+import com.peercoin.web.models.Order;
+import com.peercoin.web.models.User;
 
-import java.util.ArrayList;
-
-@Document
-public class Offer {
-    @Id
+public class OfferDisplayObject {
     private String id;
 
-    private String buyer;
-    private String seller;
+    private User buyer;
+    private User seller;
 
     private double amount;
 
@@ -22,19 +18,18 @@ public class Offer {
     private boolean sent;
     private boolean received;
     private boolean openInvestigation;
-    private boolean completed;
 
-    private ArrayList<Message> conversation;
-
-    public Offer() {
-        conversation = new ArrayList<>();
-        escrowed = false;
-        sent = false;
-        received = false;
-        openInvestigation = false;
-        completed = false;
+    public OfferDisplayObject(Offer offer, User buyer, User seller) {
+        this.id = offer.getId();
+        this.buyer = buyer;
+        this.seller = seller;
+        this.amount = offer.getAmount();
+        this.order = offer.getOrder();
+        this.escrowed = offer.isEscrowed();
+        this.sent = offer.isSent();
+        this.received = offer.isReceived();
+        this.openInvestigation = offer.isOpenInvestigation();
     }
-
 
     public String getId() {
         return id;
@@ -44,27 +39,19 @@ public class Offer {
         this.id = id;
     }
 
-    public ArrayList<Message> getConversation() {
-        return conversation;
-    }
-
-    public void addMessage(Message message) {
-        this.conversation.add(message);
-    }
-
-    public String getBuyer() {
+    public User getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(String buyer) {
+    public void setBuyer(User buyer) {
         this.buyer = buyer;
     }
 
-    public String getSeller() {
+    public User getSeller() {
         return seller;
     }
 
-    public void setSeller(String seller) {
+    public void setSeller(User seller) {
         this.seller = seller;
     }
 
@@ -114,13 +101,5 @@ public class Offer {
 
     public void setOpenInvestigation(boolean openInvestigation) {
         this.openInvestigation = openInvestigation;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 }
