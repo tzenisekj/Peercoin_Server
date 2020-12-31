@@ -10,9 +10,9 @@ if ! type "python2" > /dev/null; then
 		echo "python not installed or not in PATH"
 	else
 		mkdir lib/
-		python -m pip install --target=/home/smitty/Documents/repos/carryone/PeerCoin/plugins/lib -r requirements.txt
+		python -m pip install --target=${PWD}/lib -r requirements.txt
 	fi
 else
 	mkdir lib/
-	python2 -m pip install --target=/home/smitty/Documents/repos/carryone/PeerCoin/plugins/lib -r requirements.txt
+	python2 -m pip install --target=${PWD}/lib -r requirements.txt
 fi
