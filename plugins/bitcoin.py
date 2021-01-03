@@ -44,7 +44,7 @@ class BitcoinCurrencyMethods(CurrencyMethods):
         }
         headers = {
             'Accepts': 'application/json',
-            'X-CMC_PRO_API_KEY': '65a4d8a5-5728-48b4-8b0b-81c35e62251a',
+            'X-CMC_PRO_API_KEY': bitcoin_config.api_key,
         }
 
         session = Session()

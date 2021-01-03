@@ -36,7 +36,8 @@ def writeConfig(wallet_path, wallet_password):
     file.write('\t"url": "' + hostname + ":7777\",\n")
     file.write('\t"username": "' + user.decode("utf-8") + "\",\n")
     file.write('\t"password": "' + password.decode("utf-8") + "\",\n")
-    file.write('\t"wallet_password": "' + wallet_password + "\"\n")
+    file.write('\t"wallet_password": "' + wallet_password + "\",\n")
+    file.write('\t"api_key": "' + '65a4d8a5-5728-48b4-8b0b-81c35e62251a' + "\"\n")
     file.write("}\n")
     print("wrote config/web/bitcoin_config.py")
 
