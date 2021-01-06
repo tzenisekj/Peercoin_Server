@@ -27,23 +27,31 @@ task copyPlugins(type:Copy) {
 	from('../plugins') {
 		include '*.py'
 	}
-	from ('../plugins/lib') {
-		include '*/**'
-	}
 	from('../config/web') {
 		include '*'
 	}
 	into 'src/main/resources'
 }
 
+task copyPluginDeps(type:Copy) {
+	from ('../plugins/lib') {
+		include '*/**'
+	}
+	into 'src/main/resources'
+}
+
 task removePlugins(type: Delete) {
 	delete fileTree('src/main/resources') {
-		include '*.py'
+		include '*/**'
+		exclude 'static/'
+		exclude 'templates/'
+		exclude '*.properties*'
 	}
 }
 
 clean.dependsOn removePlugins
-copyPlugins.dependsOn removePlugins
+copyPluginDeps.dependsOn removePlugins
+copyPlugins.dependsOn copyPluginDeps
 compileJava.dependsOn copyCore
 compileJava.dependsOn copyPlugins
 
@@ -52,7 +60,6 @@ dependencies {
 	implementation name: 'core-0.0.1-SNAPSHOT'
 	implementation project(':integration')
 	implementation name: 'integration-1.0-SNAPSHOT-all'
-	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

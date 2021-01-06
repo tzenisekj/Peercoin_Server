@@ -1,5 +1,4 @@
 rootProject.name = 'peercoin'
 include 'core'
 include 'web'
-include 'manager'
 include 'integration'

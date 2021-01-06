@@ -1,7 +1,0 @@
-admin.user.name=admin
-admin.user.password=password
-
-rabbit.username=guest
-rabbit.password=guest
-
-rabbit.host=localhost
