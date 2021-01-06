@@ -1,4 +1,4 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.CryptoCoin;
 import com.peercoin.core.currency.Currency;
@@ -10,6 +10,10 @@ import com.peercoin.web.models.Order;
 import com.peercoin.web.models.User;
 import com.peercoin.web.models.dtos.OrderDto;
 import com.peercoin.web.repositories.*;
+import com.peercoin.web.services.ICryptoCoinService;
+import com.peercoin.web.services.IFiatMethodService;
+import com.peercoin.web.services.IFiatService;
+import com.peercoin.web.services.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

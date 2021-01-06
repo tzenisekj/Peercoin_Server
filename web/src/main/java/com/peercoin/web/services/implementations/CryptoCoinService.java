@@ -1,11 +1,9 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.CryptoCoin;
 import com.peercoin.core.currency.Currency;
-import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;
-import com.peercoin.core.currency.exceptions.CurrencyNameExistsException;
-import com.peercoin.core.currency.exceptions.CurrencyTickerExistsException;
 import com.peercoin.web.houseKeepers.NonPersistentRepositories;
+import com.peercoin.web.services.ICryptoCoinService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class CryptoCoinService extends CurrencyService implements ICryptoCoinService{
+public class CryptoCoinService extends CurrencyService implements ICryptoCoinService {
 
     @Override
     public List<CryptoCoin> getAllCryptoCoins() {

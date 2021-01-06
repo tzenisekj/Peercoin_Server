@@ -1,4 +1,4 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.exceptions.CurrencyNameExistsException;
@@ -9,6 +9,7 @@ import com.peercoin.core.messaging.Queues;
 import com.peercoin.web.models.CryptoCoin;
 import com.peercoin.web.models.Fiat;
 import com.peercoin.web.models.FiatMethod;
+import com.peercoin.web.services.IFiatMethodService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

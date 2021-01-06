@@ -1,8 +1,10 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.web.models.Offer;
 import com.peercoin.web.pojos.Message;
 import com.peercoin.web.repositories.OfferRepository;
+import com.peercoin.web.services.IMessageService;
+import com.peercoin.web.services.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

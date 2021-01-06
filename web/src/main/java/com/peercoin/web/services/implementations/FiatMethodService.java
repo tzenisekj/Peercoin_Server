@@ -1,10 +1,11 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.exceptions.PaymentMethodNameExistsException;
 import com.peercoin.core.paymentmethods.PaymentMethod;
 import com.peercoin.web.houseKeepers.NonPersistentRepositories;
 import com.peercoin.web.models.FiatMethod;
 import com.peercoin.web.repositories.FiatMethodRepository;
+import com.peercoin.web.services.IFiatMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

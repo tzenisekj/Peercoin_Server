@@ -1,10 +1,12 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.CryptoCoin;
 import com.peercoin.web.exceptions.UsernameExistsException;
 import com.peercoin.web.models.User;
 import com.peercoin.web.models.dtos.UserDto;
 import com.peercoin.web.repositories.UserRepository;
+import com.peercoin.web.services.ICryptoCoinService;
+import com.peercoin.web.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

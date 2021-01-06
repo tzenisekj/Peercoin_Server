@@ -1,4 +1,4 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.web.models.User;
 import com.peercoin.web.repositories.UserRepository;

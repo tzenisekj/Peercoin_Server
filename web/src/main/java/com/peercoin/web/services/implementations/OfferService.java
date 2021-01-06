@@ -1,4 +1,4 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.web.models.Offer;
 import com.peercoin.web.models.Order;
@@ -7,6 +7,7 @@ import com.peercoin.web.models.dtos.OfferDto;
 import com.peercoin.web.pojos.Message;
 import com.peercoin.web.pojos.OrderType;
 import com.peercoin.web.repositories.OfferRepository;
+import com.peercoin.web.services.IOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

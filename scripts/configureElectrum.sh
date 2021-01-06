@@ -6,10 +6,10 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		if [ -z ${WALLET_PASSWORD+x} ]; then
 			echo "Using default password"; WALLET_PASSWORD="ourBoiLovesHisIceCream"
 		fi
-		echo "starting electrum daemon"
-		electrum daemon -d
 		echo "set electrum rpc port 7777:"
 		electrum setconfig rpcport 7777
+		echo "starting electrum daemon"
+		electrum daemon -d
 		cd ..
 		new_path=${PWD}/wallet/${WALLET_NAME}
 		cd scripts/

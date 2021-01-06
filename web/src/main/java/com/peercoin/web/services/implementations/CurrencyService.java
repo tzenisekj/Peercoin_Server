@@ -1,4 +1,4 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;

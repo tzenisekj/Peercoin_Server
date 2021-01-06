@@ -1,9 +1,9 @@
-package com.peercoin.web.services;
+package com.peercoin.web.services.implementations;
 
 import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.Fiat;
-import com.peercoin.core.currency.exceptions.CurrencyDoesNotExistException;
 import com.peercoin.web.houseKeepers.NonPersistentRepositories;
+import com.peercoin.web.services.IFiatService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class FiatService extends CurrencyService implements IFiatService{
+public class FiatService extends CurrencyService implements IFiatService {
     @Override
     public List<Fiat> getAllFiat() {
         NonPersistentRepositories repositories = NonPersistentRepositories.getInstance();
