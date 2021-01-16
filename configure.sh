@@ -21,6 +21,7 @@ mkdir config
 mkdir config/web
 cd scripts/
 ./configureElectrum.sh
+./configureMonero.sh
 cd ${original_dir}
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
