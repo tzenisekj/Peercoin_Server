@@ -24,6 +24,13 @@ cd scripts/
 ./configureMonero.sh
 cd ${original_dir}
 
+cd services/
+./runServices.sh &> /dev/null &
+cd ${original_dir}
+
+mv config/web/monero_config.py services/moneroModule/
+cp scripts/config/local_monero_config.py config/web/monero_config.py
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	cd ${original_dir}
 	run_services=1

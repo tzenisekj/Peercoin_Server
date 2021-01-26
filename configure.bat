@@ -22,6 +22,10 @@ MD %cd%\config\
 MD %cd%\config\web
 MD %cd%\wallet\
 
+cd .\scripts\
+CALL runServices.bat
+cd %original_dir%
+
 for /F "tokens=3 delims=: " %%H in ('sc query "MongoDB" ^| findstr "        STATE"') do (
     if /I "%%H" NEQ "RUNNING" (
         echo Starting MongoDB
