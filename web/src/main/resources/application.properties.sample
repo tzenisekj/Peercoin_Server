@@ -6,8 +6,8 @@ rabbit.host=localhost
 registry.python.currencies=Etherium
 registry.python.methods=Paypal
 
-spring.data.mongodb.database= {{dbname}}
-spring.data.mongodb.host= {{rabbithost}}
-spring.data.mongodb.port= 27017
-spring.data.mongodb.username= {{username}}
-spring.data.mongodb.password= {{password}}
+spring.data.mongodb.database=peercoin
+spring.data.mongodb.host=database
+spring.data.mongodb.port=27017
+spring.data.mongodb.username=guest
+spring.data.mongodb.password=guest
