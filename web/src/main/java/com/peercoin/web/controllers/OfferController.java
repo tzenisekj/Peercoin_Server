@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Controller
+@RestController
 @SuppressWarnings("unused")
-@RequestMapping("/offer")
+@RequestMapping("/api/offer")
 public class OfferController {
-    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private Logger logger = Logger.getLogger(OfferController.class.getName());
 
     @Autowired
     private IOfferService offerService;
@@ -44,21 +44,8 @@ public class OfferController {
     @Autowired
     private IMessageService messageService;
 
-    @GetMapping("{id}/chat")
-    public String chat(@PathVariable("id") String id, Model model, Authentication authentication) {
-        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        model.addAttribute("username",userDetails.getUsername());
-        Offer offer = offerRepository.getById(id);
-        User user = userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
-        model.addAttribute("user", user);
-        model.addAttribute("offer", offer);
-        model.addAttribute("isBuyer", user.getId().equals(offer.getBuyer()));
-        model.addAttribute("messageDto", new MessageDto());
-        return "messages";
-    }
-
-    @GetMapping("/all")
-    public String offers(Model model, Authentication authentication) {
+    @GetMapping
+    public BuyAndSellOffers offers(Authentication authentication) {
         User user = userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
         List<Offer> buyerOffers = offerRepository.getByBuyer(user.getId());
         List<Offer> sellerOffers = offerRepository.getBySeller(user.getId());
@@ -76,10 +63,47 @@ public class OfferController {
                 SODOs.add(new OfferDisplayObject(offer, buyer, user));
             }
         }
-        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("buyerOffers", BODOs);
-        model.addAttribute("sellerOffers", SODOs);
-        return "offers";
+        return new BuyAndSellOffers(BODOs, SODOs);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<OfferDisplayObject> getOffer(@PathVariable("id") String id, Authentication authentication) {
+        Offer offer = offerRepository.getById(id);
+        if (offer == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        if (!offer.getSeller().equals(user.getId()) || !offer.getBuyer().equals(user.getId())) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        User buyer = userRepository.findById(offer.getBuyer()).orElse(null);
+        User seller = userRepository.findById(offer.getSeller()).orElse(null);
+        OfferDisplayObject odo = new OfferDisplayObject(offer, buyer, seller);
+        return ResponseEntity.ok(odo);
+    }
+
+    private static class BuyAndSellOffers {
+        List<OfferDisplayObject> buyOffers;
+        List<OfferDisplayObject> sellOffers;
+        BuyAndSellOffers(List<OfferDisplayObject> buyOffers, List<OfferDisplayObject> sellOffers) {
+            this.buyOffers = buyOffers;
+            this.sellOffers = sellOffers;
+        }
+
+        public List<OfferDisplayObject> getBuyOffers() {
+            return buyOffers;
+        }
+
+        public void setBuyOffers(List<OfferDisplayObject> buyOffers) {
+            this.buyOffers = buyOffers;
+        }
+
+        public List<OfferDisplayObject> getSellOffers() {
+            return sellOffers;
+        }
+
+        public void setSellOffers(List<OfferDisplayObject> sellOffers) {
+            this.sellOffers = sellOffers;
+        }
     }
 }

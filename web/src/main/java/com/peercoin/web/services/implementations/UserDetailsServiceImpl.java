@@ -32,12 +32,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user==null){
             throw new UsernameNotFoundException("Username " + username + " not found");
         }
-        try {
-            userService.setApiKey(user);
-        } catch (NoSuchAlgorithmException e) {
-            logger.log(Level.WARNING, "Error with encryption algorithm:\n" + e.getMessage());
-            e.printStackTrace();
-        }
         boolean enabled=true;
         boolean accountNotExpired=true;
         boolean credentialsNotExpired=true;

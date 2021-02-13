@@ -24,20 +24,6 @@ public class FiatGenerator implements ModelGenerator<Fiat> {
         fiat.setName("My Fake Fiat");
         fiat.setTicker("MFF");
         fiat.setCurrencyMethods(new CurrencyMethods() {
-            @Override
-            public String getName() {
-                return null;
-            }
-
-            @Override
-            public String getTicker() {
-                return null;
-            }
-
-            @Override
-            public String getClassName() {
-                return null;
-            }
 
             @Override
             public float getBalance() {
@@ -50,7 +36,7 @@ public class FiatGenerator implements ModelGenerator<Fiat> {
             }
 
             @Override
-            public boolean pay(String destination, int amount) {
+            public boolean pay(String destination, double amount) {
                 return false;
             }
 

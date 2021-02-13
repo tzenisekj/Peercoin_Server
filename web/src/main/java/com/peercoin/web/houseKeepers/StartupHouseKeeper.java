@@ -5,7 +5,10 @@ import com.peercoin.core.currency.Currency;
 import com.peercoin.core.currency.Fiat;
 import com.peercoin.core.paymentmethods.PaymentMethod;
 import com.peercoin.integration.CurrencyFactory;
+import com.peercoin.web.exceptions.UsernameExistsException;
 import com.peercoin.web.repositories.NonPersistentRepository;
+import com.peercoin.web.services.implementations.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -24,6 +27,9 @@ public class StartupHouseKeeper {
 
     @Value("${registry.python.methods}")
     private String methods;
+
+    @Autowired
+    private UserService userService;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -45,6 +51,15 @@ public class StartupHouseKeeper {
         for (String method : paymentMethods) {
             PaymentMethod module = currencyFactory.createPaymentMethod(method);
             paymentMethodRepository.insert(module);
+        }
+        addAdmin();
+    }
+
+    private void addAdmin() {
+        try {
+            userService.registerAdmin("admin", "password");
+        } catch(UsernameExistsException ignore) {
+
         }
     }
 }

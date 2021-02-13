@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 @RestController
 @SuppressWarnings("unused")
-@RequestMapping("/api/v1/chat")
+@RequestMapping("/api/chat")
 public class ChatController {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -45,12 +45,12 @@ public class ChatController {
     private IEscrowService escrowService;
 
     @PostMapping("/{offerId}")
-    public ResponseEntity sendMessage(@PathVariable("offerId") String offerId, @RequestHeader("credentials") String credentials, @RequestBody MessageDto message) {
+    public ResponseEntity sendMessage(@PathVariable("offerId") String offerId, @RequestBody MessageDto message, Authentication authentication) {
         Offer offer = offerRepository.getById(offerId);
         if (offer == null) {
             return ResponseEntity.badRequest().body("Offer does not exist");
         }
-        User sender = userRepository.getByRestApiKey(credentials);
+        User sender = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
         if (sender == null) {
             return ResponseEntity.status(Response.SC_FORBIDDEN).body("No user found with this username");
         }
@@ -82,8 +82,8 @@ public class ChatController {
     }
 
     @PostMapping("/{offerId}/escrow")
-    public EscrowResponseDto escrow(@PathVariable("offerId") String offerId, @RequestHeader("credentials") String credentials) {
-        User user = userRepository.getByRestApiKey(credentials);
+    public EscrowResponseDto escrow(@PathVariable("offerId") String offerId, Authentication authentication) {
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
         if (user == null) {
             return null;
         }
@@ -111,8 +111,8 @@ public class ChatController {
     }
 
     @PostMapping("/{offerId}/marksent")
-    public EscrowResponseDto send(@PathVariable("offerId") String offerId, @RequestHeader("credentials") String credentials, Authentication authentication) {
-        User user = userRepository.getByRestApiKey(credentials);
+    public EscrowResponseDto send(@PathVariable("offerId") String offerId, Authentication authentication) {
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
         EscrowResponseDto response = new EscrowResponseDto();
         response.status = "Failed to Execute";
         try {
@@ -133,8 +133,8 @@ public class ChatController {
     }
 
     @PostMapping("{offerId}/markreceived")
-    public EscrowResponseDto receive(@PathVariable("offerId") String offerId, @RequestHeader("credentials") String credentials) {
-        User user = userRepository.getByRestApiKey(credentials);
+    public EscrowResponseDto receive(@PathVariable("offerId") String offerId, Authentication authentication) {
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
         EscrowResponseDto response = new EscrowResponseDto();
         response.status = "Failed to Execute";
         try {
@@ -155,8 +155,8 @@ public class ChatController {
     }
 
     @PostMapping("/{offerId}/investigation")
-    public EscrowResponseDto openInvestigation(@PathVariable("offerId") String offerId, @RequestHeader("credentials") String credentials) {
-        User user = userRepository.getByRestApiKey(credentials);
+    public EscrowResponseDto openInvestigation(@PathVariable("offerId") String offerId, Authentication authentication) {
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
         EscrowResponseDto response = new EscrowResponseDto();
         response.status = "Failed to Execute";
         try {

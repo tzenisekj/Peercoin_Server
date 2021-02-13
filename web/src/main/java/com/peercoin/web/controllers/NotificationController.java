@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 @RestController
 @SuppressWarnings("unused")
-@RequestMapping("/api/v1/notification")
+@RequestMapping("/api/notification")
 public class NotificationController {
 
     @Autowired

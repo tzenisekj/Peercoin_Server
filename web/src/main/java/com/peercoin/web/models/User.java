@@ -6,10 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Document
 public class User {
@@ -25,8 +22,8 @@ public class User {
     private List<Notifiable> storedNotifiables;
 
     private List<String> roles;
-    private String restApiKey;
-    private LocalDateTime keyGenerationTime;
+    private String token;
+    private Date expiration;
 
     public User() {
         roles=new ArrayList<>();
@@ -86,14 +83,6 @@ public class User {
         roles.add(role);
     }
 
-    public String getRestApiKey() {
-        return restApiKey;
-    }
-
-    public void setRestApiKey(String restApiKey) {
-        this.restApiKey = restApiKey;
-    }
-
     public Map<String, WalletContents> getWallet() {
         return wallet;
     }
@@ -105,5 +94,21 @@ public class User {
 
     public void replaceWalletItem(String cryptoCoin, WalletContents walletContents) {
         this.wallet.put(cryptoCoin, walletContents);
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Date getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(Date expiration) {
+        this.expiration = expiration;
     }
 }

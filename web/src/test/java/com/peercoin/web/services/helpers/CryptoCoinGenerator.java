@@ -24,20 +24,6 @@ public class CryptoCoinGenerator implements ModelGenerator<CryptoCoin> {
         cryptoCoin.setName("Made Up Crypto" + UUID.randomUUID().toString());
         cryptoCoin.setTicker("MUC" + (int) (Math.random() * 10 + 1));
         cryptoCoin.setCurrencyMethods(new CurrencyMethods() {
-            @Override
-            public String getName() {
-                return "Made Up Crypto";
-            }
-
-            @Override
-            public String getTicker() {
-                return "MUC";
-            }
-
-            @Override
-            public String getClassName() {
-                return "crypto";
-            }
 
             @Override
             public float getBalance() {
@@ -50,7 +36,7 @@ public class CryptoCoinGenerator implements ModelGenerator<CryptoCoin> {
             }
 
             @Override
-            public boolean pay(String destination, int amount) {
+            public boolean pay(String destination, double amount) {
                 return false;
             }
 

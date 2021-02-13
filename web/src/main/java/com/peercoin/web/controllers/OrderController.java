@@ -6,14 +6,18 @@ import com.peercoin.web.exceptions.IdDoesNotExist;
 import com.peercoin.web.models.Offer;
 import com.peercoin.web.models.Order;
 import com.peercoin.web.models.User;
+import com.peercoin.web.models.displayObjects.OfferDisplayObject;
 import com.peercoin.web.models.displayObjects.OrderDisplayObject;
 import com.peercoin.web.models.dtos.OfferDto;
 import com.peercoin.web.models.dtos.OrderDto;
 import com.peercoin.web.pojos.OrderType;
 import com.peercoin.web.repositories.UserRepository;
+import com.peercoin.web.responses.FailureResponses;
+import com.peercoin.web.responses.SuccessResponses;
 import com.peercoin.web.services.*;
 import com.peercoin.web.services.implementations.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -22,11 +26,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Controller
-@RequestMapping("/order")
+@RestController
+@RequestMapping("/api/order")
 @SuppressWarnings("unused")
 public class OrderController {
     private final Logger logger=Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -48,94 +53,63 @@ public class OrderController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/submit")
-    public String submitOrder(Model model, Authentication authentication) {
-        if (authentication != null) {
-            if (authentication.isAuthenticated()) {
-                UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-                model.addAttribute("username",userDetails.getUsername());
-                model.addAttribute("order",new OrderDto());
-                model.addAttribute("cryptos",cryptoCoinService.getAllCryptoCoins());
-                model.addAttribute("fiats",fiatService.getAllFiat());
-                model.addAttribute("methods",fiatMethodService.getAllPaymentMethods());
-                return "order_form";
-            }
-        }
-        return "redirect:/login";
-    }
-
-    @PostMapping("/submit")
-    public String postOrder(@RequestParam("type") String type,@ModelAttribute("order") OrderDto orderDto, Authentication authentication) {
+    @PostMapping
+    public ResponseEntity postOrder(@RequestParam("type") String type, @RequestBody OrderDto orderDto, Authentication authentication) {
         try {
             Order order = orderService.submitOrder(orderDto, type, ((UserDetails) authentication.getPrincipal()).getUsername());
         }catch(CurrencyDoesNotExistException | PaymentMethodNameDoesNotExistException e){
-            return "/error?error=currencydoesnotexist";
+            return FailureResponses.failure("Currency or payment method do not exist");
         }
-        return "redirect:/";
+        return SuccessResponses.success("Order Successfully Added");
     }
 
     @GetMapping("/{id}")
-    public String viewOrder(@PathVariable("id") String id,Model model,Authentication authentication) {
+    public Optional<OrderDisplayObject> viewOrder(@PathVariable("id") String id, Authentication authentication) {
         Order order;
         try {
-            if (authentication != null){
-                UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-                model.addAttribute("username",userDetails.getUsername());
-                model.addAttribute("signedin",true);
-            } else{
-                model.addAttribute("username","null");
-                model.addAttribute("signedin",false);
-            }
-            order=orderService.getOrder(id);
-        } catch (IdDoesNotExist e) {
-            logger.log(Level.INFO,e.getMessage());
-            return "/error?error=iddoesnotexist";
+            order = orderService.getOrder(id);
+        } catch(IdDoesNotExist e) {
+            logger.log(Level.INFO, e.getMessage());
+            return Optional.empty();
         }
-        User initiator = userRepository.findById(order.getInitiator()).get();
+        User initiator = userRepository.findById(order.getInitiator()).orElse(null);
         OrderDisplayObject odo = new OrderDisplayObject(order, initiator);
-        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("order",odo);
-        model.addAttribute("offer",new OfferDto());
-        return "order";
+        return Optional.of(odo);
     }
     @PostMapping("/{id}/offer")
-    public String submitOffer(@PathVariable("id") String id, @ModelAttribute("offer") OfferDto offerdto, Authentication authentication){
+    public ResponseEntity submitOffer(@PathVariable("id") String id, @RequestBody OfferDto offerdto, Authentication authentication){
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             User buyer = userRepository.getByUsername(userDetails.getUsername());
             Order order = orderService.getOrder(id);
             offerService.submitOffer(offerdto, order , buyer);
-            return "redirect:/order/all?submission=success&message=order+placed";
+            return SuccessResponses.success("order placed");
         } catch(IdDoesNotExist e) {
             logger.log(Level.WARNING,e.getMessage());
-            return "redirect:/order/all?submission=error&error=orderdoesnotexist";
+            return FailureResponses.failure("order not placed, order id does not exist");
         }
     }
 
     @PostMapping("/{id}/markinactive")
-    public String markInactive(@PathVariable("id") String id, Authentication authentication) {
-        String returnValue;
+    public ResponseEntity<String> markInactive(@PathVariable("id") String id, Authentication authentication) {
+        ResponseEntity<String> returnValue;
         try {
             boolean success = orderService.markInactive(id);
             if (success) {
-                returnValue = "redirect:/order/all?message=order+deactivated";
+                returnValue = SuccessResponses.success("order deactivated");
             }
             else {
-                returnValue = "redirect:/order/all?message=order+already+deactivated";
+                returnValue = SuccessResponses.success("order already deactivated");
             }
         } catch (IdDoesNotExist e) {
             logger.log(Level.WARNING, e.getMessage());
-            returnValue = "redirect:/order/all?submission=error&error=orderdoesnotexist";
+            returnValue = FailureResponses.failure("order was not found");
         }
         return returnValue;
     }
 
-    @GetMapping("/all")
-    public String viewAllOrders(Model model, Authentication authentication) {
-        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-        User user = userRepository.getByUsername(username);
-
+    @GetMapping
+    public BuyAndSellOrders viewAllOrders() {
         List<Order> orders=orderService.getAllOrders();
         List<OrderDisplayObject> buyOrders=new ArrayList<>();
         List<OrderDisplayObject> sellOrders=new ArrayList<>();
@@ -151,11 +125,31 @@ public class OrderController {
                 }
             }
         }
-        UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        model.addAttribute("username",userDetails.getUsername());
-        model.addAttribute("sellOrders", sellOrders);
-        model.addAttribute("buyOrders", buyOrders);
-        return "orders";
+        return new BuyAndSellOrders(buyOrders, sellOrders);
     }
 
+    private static class BuyAndSellOrders {
+        List<OrderDisplayObject> buyOrders;
+        List<OrderDisplayObject> sellOrders;
+        BuyAndSellOrders(List<OrderDisplayObject> buyOrders, List<OrderDisplayObject> sellOrders) {
+            this.buyOrders = buyOrders;
+            this.sellOrders = sellOrders;
+        }
+
+        public List<OrderDisplayObject> getBuyOrders() {
+            return buyOrders;
+        }
+
+        public void setBuyOrders(List<OrderDisplayObject> buyOrders) {
+            this.buyOrders = buyOrders;
+        }
+
+        public List<OrderDisplayObject> getSellOrders() {
+            return sellOrders;
+        }
+
+        public void setSellOrders(List<OrderDisplayObject> sellOrders) {
+            this.sellOrders = sellOrders;
+        }
+    }
 }

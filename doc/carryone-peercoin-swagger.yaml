@@ -1,0 +1,806 @@
+swagger: '2.0'
+info:
+  description: This is a simple API
+  version: 1.0.0
+  title: Peercoin Admin API
+  # put the contact info for your development or API team
+  contact:
+    email: info@carryone.com
+
+# tags are used for organizing operations
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: users
+  description: Secured General Users of the application
+- name: open
+  description: Any user can hit these endpoints
+
+paths:
+  /info:
+    get:
+      tags:
+      - open
+      summary: get server info
+      operationId: getInfo
+      description: get server info, especially regarding currency plugins
+      produces:
+      - application/json
+      responses:
+        200:
+          description: info
+          schema:
+            type: object
+            properties:
+              cryptocurrencies:
+                type: array
+                items:
+                  $ref: '#/definitions/Cryptocoin'
+              fiats:
+                type: array
+                items:
+                  $ref: '#/definitions/Cryptocoin'
+              methods:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Paypal
+  /admin/user:
+    get:
+      tags:
+      - admins
+      summary: get all users
+      operationId: getUsers
+      description: |
+        Get the users in the system
+      produces:
+      - application/json
+      responses:
+        200:
+          description: all users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+    post:
+      tags:
+      - admins
+      summary: adds a user
+      operationId: addUser
+      description: Adds a user to the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        description: User to add
+        schema:
+          $ref: '#/definitions/UserDto'
+      responses:
+        201:
+          description: user created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing user already exists
+    put:
+      tags:
+      - admins
+      summary: update a user
+      operationId: editUser
+      description: edits a user in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        description: user and user data to update
+        schema:
+          $ref: '#/definitions/UserUpdate'
+      responses:
+        201:
+          description: user updated
+        400:
+          description: invalid input, object invalid
+    delete:
+      tags:
+      - admins
+      summary: delete a user
+      operationId: deleteUser
+      description: deletes a user in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        type: string
+        name: user
+        description: user id to delete
+      responses:
+        201:
+          description: user deleted
+        400:
+          description: invalid input, object invalid
+        409:
+          description: user does not exist
+  /admin/user/passwordReset:
+    put:
+      tags:
+      - admins
+      summary: reset a user's password
+      operationId: resetPassword
+      description: reset a user password in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        description: user and password to reset to
+        schema:
+          $ref: '#/definitions/UserPasswordDto'
+      responses:
+        201:
+          description: user updated
+        400:
+          description: invalid input, object invalid
+        409:
+          description: user does not exist
+  /admin/order:
+    get:
+      tags:
+      - admins
+      summary: get all orders
+      operationId: getOrders
+      description: get all orders in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: all orders
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+  /admin/offer:
+    get:
+      tags:
+      - admins
+      summary: get all offers
+      operationId: getOffers
+      description: get all offers in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: all offers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Offer'
+  /admin/tickets:
+    get:
+      tags:
+      - admins
+      summary: get all help tickets
+      operationId: getTickets
+      description: get all help tickets in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: active
+        type: boolean
+        required: false
+      responses:
+        200:
+          description: all tickets or all tickets given optional parameters
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ticket'
+    put:
+      tags:
+      - admins
+      summary: update a help ticket
+      operationId: updateTicket
+      description: update a help ticket in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: ticket
+        description: ticket data being updated
+        schema:
+          $ref: '#/definitions/Ticket'
+      responses:
+        201:
+          description: ticket successfully updated
+        400:
+          description: invalid input, object invalid
+  /admin/transactions:
+    get:
+      tags:
+      - admins
+      summary: get transactions
+      operationId: getTransactions
+      description: get transactions in the system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: user
+        type: string
+        required: false
+      responses:
+        200:
+          description: all transactions or transactions matching the query
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transaction'
+  /register:
+    post:
+      tags:
+      - open
+      summary: register a new user
+      operationId: register
+      description: adds a user to the system given a username, password, and confirm password
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: registrationDto
+        description: payload for registration
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              example: JohnSmith
+            password:
+              type: string
+              example: password
+            confirmPassword:
+              type: string
+              example: password
+      responses:
+        200:
+          description: user successfully registered
+        400:
+          description: failed to register user
+  /token:
+    get:
+      tags:
+      - open
+      summary: get user's token
+      operationId: getToken
+      description: get the token of a registered user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: userDto
+        description: payload for login
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              example: JohnSmith
+            password:
+              type: string
+              example: password
+      responses:
+        200:
+          description: user token
+          schema:
+            type: string
+            format: UUID
+            example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        400:
+          description: invalid user/invalid credentials
+  /api/users/user/{id}:
+    get:
+      tags:
+      - users
+      summary: get user's metadata
+      operationId: getUserDetail
+      description: get the user's details
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: user's id
+        type: string
+        required: true
+      responses:
+        200:
+          description: user
+          schema:
+            $ref: '#/definitions/User'
+  /api/order:
+    get:
+      tags:
+      - users
+      summary: get all orders
+      operationId: viewAllOrders
+      description: get a list of all orders
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: orders
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+    post:
+      tags:
+      - users
+      summary: add new order
+      operationId: postOrder
+      description: add a new order to the database
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: order
+        description: order to add to database
+        schema:
+          type: object
+          properties:
+            crypto:
+              type: string
+              example: Bitcoin
+            paymentMethod:
+              type: string
+              example: Paypal
+            currency:
+              type: string
+              example: United States Dollar
+            buy:
+              type: string
+              example: BUY
+            removeOnOfferCompletion:
+              type: boolean
+              example: true
+            exchangeRate:
+              type: number
+              example: 4205.21
+            min:
+              type: number
+              example: 250.00
+            max:
+              type: number
+              example: 350.00
+      responses:
+        200:
+          description: order successfully added
+        400:
+          description: order failed to post
+  /api/order/{id}:
+    get:
+      tags:
+      - users
+      summary: get single order
+      operationId: viewOrder
+      description: get the details of a single order
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: order id to search
+        type: string
+        format: UUID
+        required: true
+      responses:
+        200:
+          description: order response
+          schema:
+            $ref: '#/definitions/Order'
+  /api/order/{id}/offer:
+    post:
+      tags:
+      - users
+      summary: make an offer
+      operationId: submitOffer
+      description: submit an offer on the designated order
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: order id to search
+        type: string
+        format: UUID
+        required: true
+      - in: body
+        name: offer
+        description: offer that is being made
+        schema:
+          type: object
+          properties:
+            amount:
+              type: number
+              example: 277.89
+            type:
+              type: string
+              example: BUY
+      responses:
+        200:
+          description: offer submitted
+        400:
+          description: invalid order
+  /api/order/{id}/markinactive:
+    post:
+      tags:
+      - users
+      summary: mark order inactive
+      operationId: markInactive
+      description: indicate to the server that the order is no longer active and should no longer be displayed
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: order id to search
+        type: string
+        format: UUID
+        required: true
+      responses:
+        200:
+          description: offer marked as inactive/offer already inactive
+        400:
+          description: invalid order
+  /api/offer:
+    get:
+      tags:
+      - users
+      summary: get offers
+      operationId: offers
+      description: get all offers associated with the current user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: offers associated with user
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Offer'
+  /api/offer/{id}:
+    get:
+      tags:
+      - users
+      summary: get single offer
+      operationId: getOffer
+      description: get a single offer
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: id of offer to get
+        type: string
+        format: UUID
+        required: true
+      responses:
+        200:
+          description: offer with given id
+          schema:
+            $ref: '#/definitions/Offer'
+        400:
+          description: no offer with given id/not authorized to access offer
+  /api/wallet:
+    get:
+      tags:
+      - users
+      summary: get contents of a user's wallet
+      operationId: getWallet
+      description: get all crypto and associated balance for each user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: wallet contents
+          schema:
+            type: object
+            properties:
+              Bitcoin: 
+                type: number
+                example: 0.21572
+              Monero:
+                type: number
+                example: 0.21572
+  /api/wallet/withdraw/{name}:
+    post:
+      tags:
+      - users
+      summary: withdraw crypto
+      operationId: withdraw
+      description: withdraw specified crypto from a user's balance
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: name
+        description: name of the crypto to withdraw from
+        type: string
+      - in: body
+        name: withdrawDto
+        schema:
+          type: object
+          properties:
+            amount:
+              type: number
+              example: 0.01
+            address:
+              type: string
+              example: somebitcoinaddressuserinputs
+      responses:
+        200:
+          description: withdrawl successful
+
+
+
+
+definitions:
+  Transaction:
+    type: object
+    required:
+    - id
+    - user
+    - amount
+    - crypto
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      user:
+        $ref: '#/definitions/User'
+  Ticket:
+    type: object
+    required:
+    - opener
+    - offer
+    - active
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      opener:
+        $ref: '#/definitions/User'
+      offer:
+        $ref: '#/definitions/Offer'
+      active:
+        type: boolean
+  Offer:
+    type: object
+    required:
+    - id
+    - buyer
+    - seller
+    - amount
+    - order
+    - escrowed
+    - sent
+    - received
+    - openInvestigation
+    - completed
+    - conversation
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      buyer:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      seller:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      amount:
+        type: number
+        example: 243.92
+      order:
+        $ref: '#/definitions/Order'
+      escrowed:
+        type: boolean
+      sent:
+        type: boolean
+      received:
+        type: boolean
+      openInvestigation:
+        type: boolean
+      completed:
+        type: boolean
+      conversation:
+        type: array
+        items:
+          properties:
+            sender:
+              $ref: '#/definitions/User'
+  Order:
+    type: object
+    required:
+    - id
+    - initiator
+    - buy
+    - crypto
+    - payment
+    - method
+    - exchangeRate
+    - min
+    - max
+    - orderType
+    - active
+    - removeOnOfferCompletion
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      initiator:
+        $ref: '#/definitions/User'
+      buy:
+        type: boolean
+        example: true
+      crypto:
+        $ref: '#/definitions/Cryptocoin'
+      payment:
+        $ref: '#/definitions/Cryptocoin'
+      method:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Paypal
+      exchangeRate:
+        type: number
+        example: 2780.83
+      min:
+        type: number
+        example: 200.72
+      max:
+        type: number
+        example: 324.91
+      orderType:
+        type: string
+        example: BUY
+      active:
+        type: boolean
+        example: true
+      removeOnOfferCompletion:
+        type: boolean
+        example: false
+  Cryptocoin:
+    type: object
+    required:
+    - name
+    - ticker
+    properties:
+      name:
+        type: string
+        example: Bitcoin
+      ticker:
+        type: string
+        example: BTC
+  UserPasswordDto:
+    type: object
+    required:
+    - id
+    - password
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      password:
+        type: string
+        example: Pa$$worD
+  UserUpdate:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: John Smith
+      email:
+        type: string
+        format: email
+        example: john.smith@carryone.com
+      phoneNumber:
+        type: integer
+        example: 6308675309
+  User:
+    type: object
+    required:
+    - id
+    - name
+    - email
+    - phoneNumber
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: John Smith
+      email:
+        type: string
+        format: email
+        example: john.smith@carryone.com
+      phoneNumber:
+        type: integer
+        example: 6308675309
+  UserDto:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: John Smith
+      email:
+        type: string
+        format: email
+        example: john.smith@carryone.com
+      phoneNumber:
+        type: integer
+        example: 6308675309
