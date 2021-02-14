@@ -26,19 +26,21 @@ public class DepositHouseKeeper {
         List<User> users = userRepository.findAll();
         logger.log(Level.INFO, "Beginning scheduled search of active user's deposits");
         for (User user : users) {
-            if (user.getExpiration().after(new Date())) {
-                logger.log(Level.INFO, "Searching for deposits on user " + user.getUsername());
-                Iterable<CryptoCoin> cryptoCoins = NonPersistentRepositories.getInstance().cryptoRepository.findAll();
-                for (CryptoCoin crypto: cryptoCoins) {
-                    if (user.getWallet().get(crypto.getName()) == null) {
-                        user.insertWalletItem(crypto.getName(), 0, crypto.getCurrencyMethods());
-                    }
-                    float res = crypto.getCurrencyMethods().getAddressConfirmed(user.getWallet().get(crypto.getName()).address);
-                    if (res < 0) {
-                        WalletContents walletContents = new WalletContents();
-                        walletContents.address = crypto.getCurrencyMethods().createAddress();
-                        walletContents.value = res + user.getWallet().get(crypto.getName()).value;
-                        user.replaceWalletItem(crypto.getName(), walletContents);
+            if (user.getExpiration() != null) {
+                if (user.getExpiration().after(new Date())) {
+                    logger.log(Level.INFO, "Searching for deposits on user " + user.getUsername());
+                    Iterable<CryptoCoin> cryptoCoins = NonPersistentRepositories.getInstance().cryptoRepository.findAll();
+                    for (CryptoCoin crypto : cryptoCoins) {
+                        if (user.getWallet().get(crypto.getName()) == null) {
+                            user.insertWalletItem(crypto.getName(), 0, crypto.getCurrencyMethods());
+                        }
+                        float res = crypto.getCurrencyMethods().getAddressConfirmed(user.getWallet().get(crypto.getName()).address);
+                        if (res < 0) {
+                            WalletContents walletContents = new WalletContents();
+                            walletContents.address = crypto.getCurrencyMethods().createAddress();
+                            walletContents.value = res + user.getWallet().get(crypto.getName()).value;
+                            user.replaceWalletItem(crypto.getName(), walletContents);
+                        }
                     }
                 }
             }

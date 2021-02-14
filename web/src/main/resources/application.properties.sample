@@ -3,8 +3,8 @@ rabbit.username=guest
 rabbit.password=guest
 
 rabbit.host=localhost
-registry.python.currencies=Etherium
-registry.python.methods=Paypal
+registry.python.currencies=Etherium,UnitedStatesDollar,AustralianDollar,Franc,Pound,CanadianDollar,Yen,Euro
+registry.python.methods=Paypal,Zelle,GooglePay,Cash
 
 spring.data.mongodb.database=peercoin
 spring.data.mongodb.host=database

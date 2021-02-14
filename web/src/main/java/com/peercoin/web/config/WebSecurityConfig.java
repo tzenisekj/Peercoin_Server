@@ -62,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(provider)
                 .addFilterBefore(authenticationFilter(), AnonymousAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/","/login*","/register*", "/token*", "/info").permitAll()
+                .antMatchers("/login*","/register*", "/token*", "/info").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/admin/**").hasAuthority("ROLE_admin")
                 .anyRequest().authenticated()
