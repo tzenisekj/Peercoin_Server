@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "12970831-3682-438c-bb5f-b6f89381bfc0",
+		"_postman_id": "779081a9-631e-4141-adae-3f4433cb6254",
 		"name": "Peercoin",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -166,6 +166,152 @@
 							],
 							"path": [
 								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reflect self",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reflect",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/api/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user"
 							]
 						}
 					},
@@ -1031,11 +1177,176 @@
 			]
 		},
 		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Help Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"success\", function() {",
+									"    pm.expect(pm.response.json()).to.contain.keys(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/api/helpticket/raise",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"helpticket",
+								"raise"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "get info",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "http://{{host}}/info",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"info"
+					]
+				}
 			},
 			"response": []
 		}
@@ -1063,7 +1374,7 @@
 	"variable": [
 		{
 			"key": "USERNAME",
-			"value": "572760159"
+			"value": "724923827"
 		},
 		{
 			"key": "PASSWORD",
@@ -1072,6 +1383,14 @@
 		{
 			"key": "TOKEN",
 			"value": "6c5754ac-ff8f-446b-9735-922209bde0f8"
+		},
+		{
+			"key": "PASSWORD",
+			"value": "003807763"
+		},
+		{
+			"key": "TOKEN",
+			"value": "6f183fd5-ab36-499d-abdf-75a9418d78da"
 		},
 		{
 			"key": "TMP_ID",

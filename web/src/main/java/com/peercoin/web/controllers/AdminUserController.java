@@ -27,7 +27,7 @@ public class AdminUserController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

@@ -22,6 +22,12 @@ import java.util.logging.Logger;
 public class StartupHouseKeeper {
     Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    @Value("${user.admin.username}")
+    private String username;
+
+    @Value("${user.admin.password}")
+    private String password;
+
     @Value("${registry.python.currencies}")
     private String currencies;
 
@@ -57,7 +63,7 @@ public class StartupHouseKeeper {
 
     private void addAdmin() {
         try {
-            userService.registerAdmin("admin", "password");
+            userService.registerAdmin(username, password);
         } catch(UsernameExistsException ignore) {
 
         }

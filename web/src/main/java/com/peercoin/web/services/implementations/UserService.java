@@ -8,17 +8,20 @@ import com.peercoin.web.models.dtos.UpdatePasswordDto;
 import com.peercoin.web.models.dtos.UserDto;
 import com.peercoin.web.repositories.UserRepository;
 import com.peercoin.web.services.ICryptoCoinService;
+import com.peercoin.web.services.IHelpTicketService;
 import com.peercoin.web.services.IUserService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 @SuppressWarnings("unused")
 public class UserService implements IUserService {
+    Logger logger = Logger.getLogger(UserService.class.getName());
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -27,11 +30,14 @@ public class UserService implements IUserService {
     @Autowired
     private ICryptoCoinService cryptoCoinService;
 
+    @Autowired
+    private IHelpTicketService helpTicketService;
+
     @Override
-    public String login(String username, String password) {
+    public User login(String username, String password) {
         User user = userRepository.getByUsername(username);
         if (user == null) {
-            return StringUtils.EMPTY;
+            return null;
         }
         if (passwordEncoder.matches(password, user.getPassword())) {
             String token = UUID.randomUUID().toString();
@@ -41,9 +47,9 @@ public class UserService implements IUserService {
             c.add(Calendar.HOUR, 6);
             user.setExpiration(c.getTime());
             userRepository.save(user);
-            return user.getToken();
+            return user;
         }
-        return StringUtils.EMPTY;
+        return null;
 
     }
 
@@ -82,11 +88,18 @@ public class UserService implements IUserService {
 
         if (cryptoCoin instanceof CryptoCoin) {
             if (value > 0) {
-                res = cryptoCoin.getCurrencyMethods().pay(address, amount);
-                if (res) {
-                    user.insertWalletItem(cryptoCoin.getName(), value, cryptoCoin.getCurrencyMethods());
+                try {
+                    res = cryptoCoin.getCurrencyMethods().pay(address, amount);
+                    if (res) {
+                        user.insertWalletItem(cryptoCoin.getName(), value, cryptoCoin.getCurrencyMethods());
+                    }
+                    userRepository.save(user);
+                    return res;
+                } catch (Exception e) {
+                    String message = "Administration wallet for crypto " + cryptoCoin.getName() + " likely has no funds, or is not connected correctly";
+                    logger.log(Level.SEVERE, message);
+                    helpTicketService.raise(user, "AUTOMATICALLY GENERATED - " + message);
                 }
-                return res;
             }
         }
 
@@ -119,6 +132,13 @@ public class UserService implements IUserService {
         userRepository.save(user);
         return user;
 
+    }
+
+    @Override
+    public boolean logout(User user) {
+        user.setExpiration(new Date());
+        userRepository.save(user);
+        return true;
     }
 
     @Override

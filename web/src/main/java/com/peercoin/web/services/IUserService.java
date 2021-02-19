@@ -14,7 +14,8 @@ public interface IUserService {
     boolean updateUser(User user);
     boolean deleteUser(String id);
     User registerAdmin(String username, String password) throws UsernameExistsException;
-    String login(String username, String password);
+    User login(String username, String password);
     Optional<User> findById(String id);
     User registerNewUser(UserDto userDto) throws UsernameExistsException;
+    boolean logout(User user);
 }

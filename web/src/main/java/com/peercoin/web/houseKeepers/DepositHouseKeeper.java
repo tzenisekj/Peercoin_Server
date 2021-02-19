@@ -34,11 +34,20 @@ public class DepositHouseKeeper {
                         if (user.getWallet().get(crypto.getName()) == null) {
                             user.insertWalletItem(crypto.getName(), 0, crypto.getCurrencyMethods());
                         }
-                        float res = crypto.getCurrencyMethods().getAddressConfirmed(user.getWallet().get(crypto.getName()).address);
-                        if (res < 0) {
+                        try {
+                            float res = crypto.getCurrencyMethods().getAddressConfirmed(user.getWallet().get(crypto.getName()).address);
+                            if (res < 0) {
+                                WalletContents walletContents = new WalletContents();
+                                walletContents.address = crypto.getCurrencyMethods().createAddress();
+                                walletContents.value = res + user.getWallet().get(crypto.getName()).value;
+                                user.replaceWalletItem(crypto.getName(), walletContents);
+                            }
+                        } catch (Exception e) {
+                            logger.log(Level.WARNING, e.getMessage());
+                            logger.log(Level.WARNING, "This is likely caused by the address not existing in the wallet. Creating a new address for the user");
                             WalletContents walletContents = new WalletContents();
                             walletContents.address = crypto.getCurrencyMethods().createAddress();
-                            walletContents.value = res + user.getWallet().get(crypto.getName()).value;
+                            walletContents.value = user.getWallet().get(crypto.getName()).value;
                             user.replaceWalletItem(crypto.getName(), walletContents);
                         }
                     }

@@ -4,18 +4,18 @@ import com.peercoin.web.exceptions.UsernameExistsException;
 import com.peercoin.web.models.User;
 import com.peercoin.web.models.dtos.UserDto;
 import com.peercoin.web.models.dtos.UserLoginDto;
+import com.peercoin.web.repositories.UserRepository;
 import com.peercoin.web.responses.FailureResponses;
 import com.peercoin.web.responses.SuccessResponses;
 import com.peercoin.web.services.IUserService;
-import com.peercoin.web.services.IUserTokenService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +26,8 @@ public class UserController {
     private Logger logger=Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     @Autowired
     private IUserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid UserDto userDto) {
@@ -44,17 +46,30 @@ public class UserController {
     }
 
     @PostMapping(path = "/token", produces = "application/json")
-    public String getToken(@RequestBody UserLoginDto userLoginDto){
-        String token= userService.login(userLoginDto.getUsername(),userLoginDto.getPassword());
-        if(StringUtils.isEmpty(token)){
-            return "{\"error\": \"no token found\"}";
+    public ResponseEntity<User> getToken(@RequestBody UserLoginDto userLoginDto){
+        User user= userService.login(userLoginDto.getUsername(),userLoginDto.getPassword());
+        if(user == null) {
+            return ResponseEntity.badRequest().body(null);
         }
-        return "{\"token\": \"" + token + "\"}";
+        return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout (Authentication authentication) {
+        User user = userRepository.getByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+        if (userService.logout(user)) {
+            return SuccessResponses.success("Logged out successfully");
+        }
+        return FailureResponses.failure("Failed to log out");
+    }
 
     @GetMapping(value = "/api/users/user/{id}",produces = "application/json")
     public User getUserDetail(@PathVariable String id){
         return userService.findById(id).orElse(null);
+    }
+
+    @GetMapping(value = "/api/user", produces = "application/json")
+    public User getUser(Authentication authentication) {
+        return userRepository.getByUsername(((UserDetails)authentication.getPrincipal()).getUsername());
     }
 }
