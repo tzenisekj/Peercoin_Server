@@ -1,0 +1,21 @@
+services:
+  database:
+    image: 'mongo'
+    container_name: 'database'
+    environment:
+      - MONGO_INITDB_DATABASE=peercoin
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=s#42D3M12lqg
+    volumes:
+      - ./docker/initdb.d/:/docker-entrypoint-initdb.d/:ro
+      - ./docker/mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'
+    restart: always
+  web:
+    build: .
+    ports:
+      - 8081:8081
+    depends_on:
+      - database
+

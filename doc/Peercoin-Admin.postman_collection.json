@@ -1,0 +1,1669 @@
+{
+	"info": {
+		"_postman_id": "89fc78ea-92e0-4cad-8e04-827641237a7f",
+		"name": "Peercoin Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.collectionVariables.set(\"ADMIN_TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{admin_urn}}\",\n    \"password\": \"{{admin_pwd}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login(NON-ADMIN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users As Non-Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"access denied\", function() {",
+									"    pm.response.to.have.status(403);",
+									"    pm.response.to.be.forbidden;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    let user = pm.response.json()[pm.response.json().length - 1];",
+									"    pm.collectionVariables.set(\"USER_ID\", user['id']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"{{USER_ID}}\",\n    \"username\": \"{{USERNAME}}\",\n    \"email\": null,\n    \"phoneNumber\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"PASSWORD\",Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"{{USER_ID}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/user/passwordreset",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"passwordreset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login(NON-ADMIN) 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/user?id={{USER_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"user"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{USER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Management",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.collectionVariables.set(\"ADMIN_TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{admin_urn}}\",\n    \"password\": \"{{admin_pwd}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login(NON-ADMIN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"crypto\": \"Etherium\",\n  \"paymentMethod\": \"Paypal\",\n  \"currency\": \"Etherium\",\n  \"buy\": \"BUY\",\n  \"removeOnOfferCompletion\": true,\n  \"exchangeRate\": 4205.21,\n  \"min\": 250,\n  \"max\": 350\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/api/order?type=BUY",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"order"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "BUY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/order",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Offer Management",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.collectionVariables.set(\"ADMIN_TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{admin_urn}}\",\n    \"password\": \"{{admin_pwd}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login(NON-ADMIN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"crypto\": \"Etherium\",\n  \"paymentMethod\": \"Paypal\",\n  \"currency\": \"Etherium\",\n  \"buy\": \"BUY\",\n  \"removeOnOfferCompletion\": true,\n  \"exchangeRate\": 4205.21,\n  \"min\": 250,\n  \"max\": 350\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/api/order?type=BUY",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"order"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "BUY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TMP_ID\", pm.response.json()['buyOrders'][0]['id']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/api/order",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 277.89,\n  \"type\": \"BUY\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/api/order/{{TMP_ID}}/offer",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"order",
+								"{{TMP_ID}}",
+								"offer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Offers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/offer",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"offer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket Management",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.collectionVariables.set(\"ADMIN_TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{admin_urn}}\",\n    \"password\": \"{{admin_pwd}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"USERNAME\",Math.random().toString().substr(2, 9));",
+									"pm.collectionVariables.set(\"PASSWORD\", Math.random().toString().substr(2, 9));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.body === \"{\\\"success\\\": \\\"successfully registered user\\\"}\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\",\n    \"confirmPassword\": \"{{PASSWORD}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login(NON-ADMIN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TOKEN\", pm.response.json()['token']);",
+									"});",
+									"",
+									"pm.test(\"ensure contains token\", function() {",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Help Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"success\", function() {",
+									"    pm.expect(pm.response.json()).to.contain.keys(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/api/helpticket/raise",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"helpticket",
+								"raise"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Help Tickets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.collectionVariables.set(\"TICKET_ID\", pm.response.json()[0]['id']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Note",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"NOTE\",Math.random().toString().substr(2, 9));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketId\": \"{{TICKET_ID}}\",\n    \"note\": \"{{NOTE}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket/note",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket",
+								"note"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Help Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure notes match\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.json()[0]['notes'][0]).to.be.eql(pm.collectionVariables.get(\"NOTE\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket?id={{TICKET_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{TICKET_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"basic functionality\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Order claimed\", function() {",
+									"    pm.expect(pm.response.json()).to.contain.keys(\"success\");",
+									"    pm.expect(pm.response.json()['success']).to.include(\"CLAIMED\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketId\": \"{{TICKET_ID}}\",\n    \"status\": 1,\n    \"note\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket/handle",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket",
+								"handle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Await User Action",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"basic functionality\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Order claimed\", function() {",
+									"    pm.expect(pm.response.json()).to.contain.keys(\"success\");",
+									"    pm.expect(pm.response.json()['success']).to.include(\"PENDING_USER_ACTION\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketId\": \"{{TICKET_ID}}\",\n    \"status\": 2,\n    \"note\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket/handle",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket",
+								"handle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Close Ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"basic functionality\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Order claimed\", function() {",
+									"    pm.expect(pm.response.json()).to.contain.keys(\"success\");",
+									"    pm.expect(pm.response.json()['success']).to.include(\"CLOSED\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketId\": \"{{TICKET_ID}}\",\n    \"status\": 3,\n    \"note\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket/handle",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket",
+								"handle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Help Ticket post close",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ensure resolved and closed\", function() {",
+									"    pm.response.to.be.ok;",
+									"    pm.expect(pm.response.json()[0]['helpTicketStatus']).to.be.eql('CLOSED');",
+									"    pm.expect(pm.response.json()[0]['resolved']).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "{{ADMIN_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{host}}/admin/helpticket?id={{TICKET_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"admin",
+								"helpticket"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{TICKET_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "TOKEN",
+			"value": "70dbc1ca-2b4f-4173-84dc-caa7933e4ef1"
+		},
+		{
+			"key": "ADMIN_TOKEN",
+			"value": "0107c931-c328-4003-87d4-46a91b22a2ff"
+		},
+		{
+			"key": "USERNAME",
+			"value": "160277127"
+		},
+		{
+			"key": "PASSWORD",
+			"value": "397682792"
+		},
+		{
+			"key": "USER_ID",
+			"value": "6021f64b14cd1a480262a534"
+		},
+		{
+			"key": "TMP_ID",
+			"value": "6022010d48a0b56867df5ae0"
+		},
+		{
+			"key": "NOTE",
+			"value": "504774007"
+		},
+		{
+			"key": "TICKET_ID",
+			"value": "602795591b74ae33cce3c8aa"
+		}
+	]
+}

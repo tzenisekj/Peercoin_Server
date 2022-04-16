@@ -1,0 +1,16 @@
+server.port=8081
+rabbit.username=guest
+rabbit.password=guest
+
+user.admin.username=admin
+user.admin.password=password
+
+rabbit.host=localhost
+registry.python.currencies=Etherium,UnitedStatesDollar,AustralianDollar,Franc,Pound,CanadianDollar,Yen,Euro
+registry.python.methods=Paypal,Zelle,GooglePay,Cash
+
+spring.data.mongodb.database=peercoin
+spring.data.mongodb.host=database
+spring.data.mongodb.port=27017
+spring.data.mongodb.username=guest
+spring.data.mongodb.password=guest
